@@ -9,8 +9,8 @@ import FinanceDataReader as fdr  # pip install -U finance-datareader
 class Symbols: 
     
     @staticmethod
-    def _load_symbols(MARKET:str) -> Iterator[str]:
-        yield from list(fdr.StockListing(MARKET).loc[:,'Symbol'].drop_duplicates().reset_index(drop=True).values)
+    def _load_symbols(MARKET:str) -> List[str]:
+        return list(fdr.StockListing(MARKET).loc[:,'Symbol'].drop_duplicates().reset_index(drop=True).values)
             
     @staticmethod
     def load_nasdaq() -> Iterator[str]: 
@@ -40,7 +40,7 @@ class Symbols:
         return Symbols._load_symbols('NASDAQ')
         
     @staticmethod
-    def load_snp500() ->  Iterator[str]: 
+    def load_snp500() ->   List[str]:
         """
         Snp500 symbols 리스트를 불러온다
 
