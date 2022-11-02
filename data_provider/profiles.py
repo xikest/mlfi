@@ -11,10 +11,14 @@ class Profiles:
         async   def _load_profiles(symbols:List[str])-> Iterator[pd.Series]:
                 def get_profile_list(): yield from ['longName', 'industry', 'sector' ,'enterpriseValue']
                 for symbol in symbols:
+                    try:
                         ds = pd.Series({profile:yf.Ticker(symbol).info.get(profile) for profile in get_profile_list()})
                         ds.name=symbol
                         yield ds
                         await   asyncio.sleep(1)
+                    except ValueError as e:
+                        print(e)
+                        pass
                 
         @staticmethod
         def load_nasdaq()-> Iterator[pd.Series]:

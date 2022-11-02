@@ -13,11 +13,14 @@ class Prices:
         @staticmethod
         async   def load_from_web(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
                     for symbol in symbols: 
-                        df = web.DataReader(symbol, 'yahoo', start=start_date, end=end_date)
-                        df['Symbol']=symbol
-                        yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
-                        await asyncio.sleep(1)
-                    
+                        try:
+                            df = web.DataReader(symbol, 'yahoo', start=start_date, end=end_date)
+                            df['Symbol']=symbol
+                            yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+                            await asyncio.sleep(1)
+                        except ValueError as e:
+                            print(e)
+                            pass
         @staticmethod
         def load_from_web(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
             """
