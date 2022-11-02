@@ -45,21 +45,28 @@ class Prices:
             2020-01-07	AAPL	74.959999	75.224998	74.370003	74.597504	108872000.0	73.202744
             """
             for symbol in symbols: 
-                df = web.DataReader(symbol, 'yahoo', start=start_date, end=end_date)
-                df['Symbol']=symbol
-                yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
-
+                try:
+                    df = web.DataReader(symbol, 'yahoo', start=start_date, end=end_date)
+                    df['Symbol']=symbol
+                    yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+                except Exception as e:
+                    print(e)
+                    pass
             # elif 'famafrench': 
             #     yield {symbol : web.DataReader(symbol, source, start=start_date, end=end_date)[0] for symbol in symbols}
 
         @staticmethod
         async def load_from_fdr(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
                     for symbol in symbols: 
-                        df = fdr.DataReader(symbol, start=start_date, end=end_date)
-                        df['Symbol']=symbol
-                        yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
-                        await asyncio.sleep(1)
-                    
+                        try:
+                            df = fdr.DataReader(symbol, start=start_date, end=end_date)
+                            df['Symbol']=symbol
+                            yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+                            await asyncio.sleep(1)
+                        except Exception as e:
+                            print(e)
+                            pass
+                            
 
         @staticmethod
         def load_from_fdr(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
@@ -74,6 +81,10 @@ class Prices:
                         pd.DataFrame: 요청된 symbols의 adj close 데이터를 반환한다. 
             """
             for symbol in symbols: 
-                df = fdr.DataReader(symbol, start=start_date, end=end_date)
-                df['Symbol']=symbol
-                yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+                try:
+                    df = fdr.DataReader(symbol, start=start_date, end=end_date)
+                    df['Symbol']=symbol
+                    yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+                except Exception as e:
+                    print(e)
+                    pass
