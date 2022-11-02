@@ -3,17 +3,18 @@ import asyncio
 import pandas as pd
 import yfinance as yf
 import FinanceDataReader as fdr  # pip install -U finance-datareader
-
+import asyncio
 from .symbols import Symbols
 
 class Profiles:
         @staticmethod
-        def _load_profiles(symbols:Iterator[str])-> Iterator[pd.Series]:
-            def _get_profile_list(): yield from ['longName', 'industry', 'sector' ,'enterpriseValue']
-            for symbol in symbols():
-                    ds = pd.Series({profile:yf.Ticker(symbol).info.get(profile) for profile in _get_profile_list()})
-                    ds.name=symbol
-                    yield ds
+        async   def _load_profiles(symbols:List[str])-> Iterator[pd.Series]:
+                def get_profile_list(): yield from ['longName', 'industry', 'sector' ,'enterpriseValue']
+                for symbol in symbols:
+                        ds = pd.Series({profile:yf.Ticker(symbol).info.get(profile) for profile in get_profile_list()})
+                        ds.name=symbol
+                        yield ds
+                        await   asyncio.sleep(1)
                 
         @staticmethod
         def load_nasdaq()-> Iterator[pd.Series]:

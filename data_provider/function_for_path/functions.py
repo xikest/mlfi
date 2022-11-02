@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 
 
-class FilesF:
+class FunctionPath:
 
     # ===============================================
     # 파일 열기

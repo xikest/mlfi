@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from typing import Lit, Optional
 
 
 class PathMgt():
