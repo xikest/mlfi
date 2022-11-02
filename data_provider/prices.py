@@ -56,7 +56,7 @@ class Prices:
             #     yield {symbol : web.DataReader(symbol, source, start=start_date, end=end_date)[0] for symbol in symbols}
 
         @staticmethod
-        async def load_from_fdr(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
+        async def load_from_fdr(symbols:List[str]=['AAPL'], start='2020-1-1', end='2022-12-31') -> pd.DataFrame:
                     for symbol in symbols: 
                         try:
                             df = fdr.DataReader(symbol, start=start_date, end=end_date)
@@ -69,7 +69,7 @@ class Prices:
                             
 
         @staticmethod
-        def load_from_fdr(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
+        def load_from_fdr(symbols:List[str]=['AAPL'], start='2020-1-1', end='2022-12-31') -> pd.DataFrame:
             """
             FinacialDatareader에서 데이터를 받아온다.
             Args:
