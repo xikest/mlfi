@@ -43,7 +43,7 @@ class FunctionPath:
     class Web:
         @staticmethod
         def download_from_web(url:str, unzip:bool=False):
-            if unzip is True: FilesF.Zipfiles.unzip_file(get(url).content)
+            if unzip is True: FunctionPath.Zipfiles.unzip_file(get(url).content)
             else:  return get(url).content
             
     # ===============================================
