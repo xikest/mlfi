@@ -10,7 +10,7 @@ class Profiles:
 
     @staticmethod 
     @property  
-    def info_snp500() -> pd.DataFrame:
+    def load_info_snp500() -> pd.DataFrame:
         url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
         df = pd.read_html(url, header=0)[0]
         df.columns = ['ticker', 'name', 'sec_filings', 'gics_sector', 'gics_sub_industry', 'location', 'first_added', 'cik', 'founded']
