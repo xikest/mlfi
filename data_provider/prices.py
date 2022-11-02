@@ -18,7 +18,7 @@ class Prices:
                             df['Symbol']=symbol
                             yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
                             await asyncio.sleep(1)
-                        except ValueError as e:
+                        except Exception as e:
                             print(e)
                             pass
         @staticmethod

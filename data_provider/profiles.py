@@ -16,7 +16,7 @@ class Profiles:
                         ds.name=symbol
                         yield ds
                         await   asyncio.sleep(1)
-                    except ValueError as e:
+                    except Exception as e:
                         print(e)
                         pass
                 
