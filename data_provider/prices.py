@@ -19,7 +19,7 @@ class Prices:
                             yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
                             await asyncio.sleep(1)
                         except Exception as e:
-                            print(e)
+                            print(f'{symbol},prices: {e}')
                             pass
         @staticmethod
         def load_from_web(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
@@ -50,7 +50,7 @@ class Prices:
                     df['Symbol']=symbol
                     yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
                 except Exception as e:
-                    print(e)
+                    print(f'{symbol},prices: {e}')
                     pass
             # elif 'famafrench': 
             #     yield {symbol : web.DataReader(symbol, source, start=start_date, end=end_date)[0] for symbol in symbols}
@@ -64,7 +64,7 @@ class Prices:
                             yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
                             await asyncio.sleep(1)
                         except Exception as e:
-                            print(e)
+                            print(f'{symbol},prices: {e}')
                             pass
                             
 
@@ -86,5 +86,5 @@ class Prices:
                     df['Symbol']=symbol
                     yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
                 except Exception as e:
-                    print(e)
+                    print(f'{symbol},prices: {e}')
                     pass
