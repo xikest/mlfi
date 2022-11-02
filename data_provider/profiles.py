@@ -9,7 +9,6 @@ import asyncio
 class Profiles:
 
     @staticmethod 
-    @property  
     def load_info_snp500() -> pd.DataFrame:
         url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
         df = pd.read_html(url, header=0)[0]
