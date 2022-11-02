@@ -1,8 +1,8 @@
 
 import pandas as pd
 
-from .engineering_function_for.returns import Returns
-from .engineering_function_for.factors import MarketFactors, MomentumFactors, DateIndicators, LaggedReturns, HoldingPeriodReturns, DynamicSizeFactors, SectorFactors, DummyVariables
+from .function_for_engineering.returns import Returns
+from .function_for_engineering.factors import MarketFactors, MomentumFactors, DateIndicators, LaggedReturns, HoldingPeriodReturns, DynamicSizeFactors, SectorFactors, DummyVariables
 
 
 class DataEngineer:

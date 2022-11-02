@@ -8,19 +8,19 @@ import FinanceDataReader as fdr  # pip install -U finance-datareader
 
   
 
-class Prices:
-    class Web:
-        @staticmethod
-        async   def load_from_web(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
-                    for symbol in symbols: 
-                        try:
-                            df = web.DataReader(symbol, 'yahoo', start=start_date, end=end_date)
-                            df['Symbol']=symbol
-                            yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
-                            await asyncio.sleep(1)
-                        except Exception as e:
-                            print(f'{symbol},prices: {e}')
-                            pass
+class Data:
+    class Prices:
+        # @staticmethod
+        # async   def load_from_web(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
+        #             for symbol in symbols: 
+        #                 try:
+        #                     df = web.DataReader(symbol, 'yahoo', start=start_date, end=end_date)
+        #                     df['Symbol']=symbol
+        #                     yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+        #                     await asyncio.sleep(1)
+        #                 except Exception as e:
+        #                     print(f'{symbol},prices: {e}')
+        #                     pass
         @staticmethod
         def load_from_web(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
             """
@@ -55,21 +55,21 @@ class Prices:
             # elif 'famafrench': 
             #     yield {symbol : web.DataReader(symbol, source, start=start_date, end=end_date)[0] for symbol in symbols}
 
-        @staticmethod
-        async def load_from_fdr(symbols:List[str]=['AAPL'], start='2020-1-1', end='2022-12-31') -> pd.DataFrame:
-                    for symbol in symbols: 
-                        try:
-                            df = fdr.DataReader(symbol, start=start_date, end=end_date)
-                            df['Symbol']=symbol
-                            yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
-                            await asyncio.sleep(1)
-                        except Exception as e:
-                            print(f'{symbol},prices: {e}')
-                            pass
+        # @staticmethod
+        # async def load_from_fdr(symbols:List[str]=['AAPL'], start='2020-1-1', end='2022-12-31') -> pd.DataFrame:
+        #             for symbol in symbols: 
+        #                 try:
+        #                     df = fdr.DataReader(symbol, start=start_date, end=end_date)
+        #                     df['Symbol']=symbol
+        #                     yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+        #                     await asyncio.sleep(1)
+        #                 except Exception as e:
+        #                     print(f'{symbol},prices: {e}')
+        #                     pass
                             
 
         @staticmethod
-        def load_from_fdr(symbols:List[str]=['AAPL'], start='2020-1-1', end='2022-12-31') -> pd.DataFrame:
+        def load_from_fdr(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
             """
             FinacialDatareader에서 데이터를 받아온다.
             Args:
@@ -88,3 +88,14 @@ class Prices:
                 except Exception as e:
                     print(f'{symbol},prices: {e}')
                     pass
+                
+        class FamaFrench:
+            @staticmethod
+            def load_from_web(symbols:List[str]=['F-F_Research_Data_5_Factors_2x3'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
+                for symbol in symbols: 
+                        try:
+                            df = web.DataReader(symbol, 'famafrench', start=start_date, end=end_date)
+                            yield df[0]
+                        except Exception as e:
+                            print(f'F-F_Research_Data: {e}')
+                            pass
