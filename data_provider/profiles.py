@@ -19,18 +19,25 @@ class Profiles:
     @staticmethod   
     def generate_by(symbols:List[str])-> Iterator[pd.Series]:
             for symbol in symbols:
+                try:
                     ds = pd.Series({profile:yf.Ticker(symbol).info.get(profile) for profile in ['longName', 'industry', 'sector' ,'enterpriseValue']})
                     ds.name=symbol
                     yield ds
+                except Exception as e:
+                    print(e)
+                    pass
                     
     @staticmethod      
     async   def generate_by(symbols:List[str])-> Iterator[pd.Series]:
                 for symbol in symbols:
+                    try:
                         ds = pd.Series({profile:yf.Ticker(symbol).info.get(profile) for profile in ['longName', 'industry', 'sector' ,'enterpriseValue']})
                         ds.name=symbol
                         yield ds
                         asyncio.sleep(1)
-                        
+                    except Exception as e:
+                        print(e)
+                        pass
                         
                         
 # class ProfilesYf:
