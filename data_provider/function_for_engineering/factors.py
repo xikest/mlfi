@@ -52,11 +52,11 @@ class MarketFactors(Factors):
         self._dfFactor = dfFactor
 
     def _calculate_factors(self) -> pd.DataFrame:
-        dfRtn = self._calculate_rollingFactorBetas(self._dfRtn, self._dfFactor) # -> dfRtn_add_Factor_sub_Rf
-        dfBetas = self._calculate_betas(dfRtn)
-        dfRtn = self._merge_rtn_and_betas(dfRtn, dfBetas) #-> dfRtn_add_dfBetas
-        dfRtn = self._impute_missingFactorBetas(dfRtn)
-        return dfRtn
+        dfFactor = self._calculate_rollingFactorBetas(self._dfRtn, self._dfFactor) # -> dfRtn_add_Factor_sub_Rf
+        dfBetas = self._calculate_betas(dfFactor)
+        self._dfRtn.join(dfBetas.groupby(level='ticker').shift())  #-> dfRtn_add_dfBetas
+        self._dfRtn = self._impute_missingFactorBetas(self._dfRtn)
+        return self._dfRtn
         
     def _calculate_rollingFactorBetas(self, dfRtn:pd.DataFrame, dfFactor:"F-F_Research_Data_5_Factors_2x3", periods:str = 'M')->pd.DataFrame:
         """
@@ -75,8 +75,8 @@ class MarketFactors(Factors):
         dfFactor_sub_Rf.index = dfFactor_sub_Rf.index.to_timestamp()
         dfFactor_sub_Rf = dfFactor_sub_Rf.resample(periods).last().div(100)
         dfFactor_sub_Rf.index.name = 'Date'
-        dfRtn_add_Factor_sub_Rf = dfFactor_sub_Rf.join(dfRtn['return_1m']).sort_index()
-        return dfRtn_add_Factor_sub_Rf
+        dfFactor = dfFactor_sub_Rf.join(dfRtn['return_1m']).sort_index()
+        return dfFactor
 
     def _calculate_betas(self, dfRtnFactorSubRf:pd.DataFrame, period:str='M')->pd.DataFrame:
         """
@@ -101,7 +101,7 @@ class MarketFactors(Factors):
                         .drop('const', axis=1)))
         return dfBetas
     
-    def _merge_rtn_and_betas(self, dfRtnFactorSubRf:pd.DataFrame, dfBetas:pd.DataFrame) -> pd.DataFrame:
+    def _merge_rtn_and_betas(self, dfRtn:pd.DataFrame, dfBetas:pd.DataFrame) -> pd.DataFrame:
         """
         beta 와 수익률을 결합한다.
         
@@ -113,8 +113,8 @@ class MarketFactors(Factors):
         Returns:
             pd.DataFrame: 수익률과 beta가 합해진 데이터
         """
-        dfRtn_add_dfBetas = dfRtnFactorSubRf.join(dfBetas.groupby(level='ticker').shift()) # 1개월 수익에 맞추기 위해 쉬프트 함
-        return  dfRtn_add_dfBetas
+        dfRtn = dfRtn # 1개월 수익에 맞추기 위해 쉬프트 함
+        return  dfRtn
     
     def _impute_missingFactorBetas(self, dfRtn_add_dfBetas:pd.DataFrame) -> pd.DataFrame:
         """
