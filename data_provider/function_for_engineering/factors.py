@@ -54,6 +54,7 @@ class MarketFactors(Factors):
     def _calculate_factors(self) -> pd.DataFrame:
         dfFactor = self._calculate_rollingFactorBetas(self._dfRtn, self._dfFactor) # -> dfRtn_add_Factor_sub_Rf
         dfBetas = self._calculate_betas(dfFactor)
+        print(dfBetas)
         self._dfRtn = self._rtn_merge_betas(self._dfRtn, dfBetas)  #-> dfRtn_add_dfBetas
         self._dfRtn = self._impute_missingFactorBetas(self._dfRtn)
         return self._dfRtn
@@ -113,7 +114,8 @@ class MarketFactors(Factors):
         Returns:
             pd.DataFrame: 수익률과 beta가 합해진 데이터
         """
-        return  dfRtn.join(dfBetas.groupby(level='ticker').shift())  # 1개월 수익에 맞추기 위해 쉬프트 함
+        dfRtn =  dfRtn.join(dfBetas.groupby(level='ticker').shift())  # 1개월 수익에 맞추기 위해 쉬프트 함
+        return dfRtn
 
     
     def _impute_missingFactorBetas(self, dfRtn_add_dfBetas:pd.DataFrame) -> pd.DataFrame:
@@ -130,6 +132,8 @@ class MarketFactors(Factors):
         factors = ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA']
         dfRtn_add_dfBetas.loc[:, factors] =  dfRtn_add_dfBetas.groupby('ticker')[factors].apply(lambda x: x.fillna(x.mean()))
         return dfRtn_add_dfBetas
+    
+    
     
 # ===============================================
 # momentum factors 
