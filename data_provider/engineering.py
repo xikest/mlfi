@@ -39,14 +39,14 @@ class DataEngineer:
         return dfRtn 
 
     
-_dfFactors = dfFFfactors
-dfRtn = Returns(dfPrices).get_data()
+# _dfFactors = dfFFfactors
+# dfRtn = Returns(dfPrices).get_data()
 
-dfRtn  = MarketFactors(dfRtn, _dfFactors).get_data()
-dfRtn = MomentumFactors(dfRtn).get_data()
-dfRtn = DateIndicators(dfRtn).get_data()
-dfRtn = LaggedReturns(dfRtn).get_data()
-dfRtn = HoldingPeriodReturns(dfRtn).get_data()
-dfRtn = DynamicSizeFactors(dfRtn, dfPrices, dfprofilesSnp500).get_data()    
-dfRtn = SectorFactors(dfRtn, dfprofilesSnp500).get_data()  
-dfRtn = DummyVariables(dfRtn).get_data() 
+# dfRtn  = MarketFactors(dfRtn, _dfFactors).get_data()
+# dfRtn = MomentumFactors(dfRtn).get_data()
+# dfRtn = DateIndicators(dfRtn).get_data()
+# dfRtn = LaggedReturns(dfRtn).get_data()
+# dfRtn = HoldingPeriodReturns(dfRtn).get_data()
+# dfRtn = DynamicSizeFactors(dfRtn, dfPrices, dfprofilesSnp500).get_data()    
+# dfRtn = SectorFactors(dfRtn, dfprofilesSnp500).get_data()  
+# dfRtn = DummyVariables(dfRtn).get_data() 
