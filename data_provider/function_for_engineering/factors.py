@@ -223,8 +223,7 @@ class DynamicSizeFactors(Factors):
 
     def _calculate_sizeFactors(self, dfPrices:pd.DataFrame, dfRtn:pd.DataFrame):
         sizeFactor = (dfPrices
-                        .loc[dfRtn.index.get_level_values('Date').unique(),
-                            dfRtn.index.get_level_values('ticker').unique()]
+                        .reindex(index=dfRtn.index.get_level_values('Date').unique(), columns= dfRtn.index.get_level_values('ticker').unique())
                         .sort_index(ascending=False)
                         .pct_change()
                         .fillna(0)
@@ -252,7 +251,7 @@ class SectorFactors(Factors):
 # create_dummy_data
 # ===============================================
 
-class DummyVariables:
+class DummyVariables(Factors):
     def __init__(self, dfRtn:pd.DataFrame): 
         super().__init__(dfRtn)
    
