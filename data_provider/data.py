@@ -48,8 +48,8 @@ class Data:
             for symbol in symbols: 
                 try:
                     df = web.DataReader(symbol, 'yahoo', start=start_date, end=end_date)
-                    df['Symbol']=symbol
-                    yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+                    df['ticker']=symbol
+                    yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
                 except Exception as e:
                     print(f'{symbol},prices: {e}')
                     pass
@@ -84,8 +84,8 @@ class Data:
             for symbol in symbols: 
                 try:
                     df = fdr.DataReader(symbol, start=start_date, end=end_date)
-                    df['Symbol']=symbol
-                    yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+                    df['ticker']=symbol
+                    yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
                 except Exception as e:
                     print(f'{symbol},prices: {e}')
                     pass

@@ -92,7 +92,7 @@ class MarketFactors(Factors):
         """
         if period is 'M' :   T = 24
         elif 'W' :   T = 24 * 52
-        dfBetas = (dfRtnFactorSubRf.groupby(level='Symbol',
+        dfBetas = (dfRtnFactorSubRf.groupby(level='ticker',
                                     group_keys=False)
                 .apply(lambda x: RollingOLS(endog=x.return_1m,
                                             exog=sm.add_constant(x.drop('return_1m', axis=1)),
@@ -114,7 +114,7 @@ class MarketFactors(Factors):
         Returns:
             pd.DataFrame: 수익률과 beta가 합해진 데이터
         """
-        dfRtn =  dfRtn.join(dfBetas.groupby(level='Symbol').shift())  # 1개월 수익에 맞추기 위해 쉬프트 함
+        dfRtn =  dfRtn.join(dfBetas.groupby(level='ticker').shift())  # 1개월 수익에 맞추기 위해 쉬프트 함
         return dfRtn
 
     
@@ -130,7 +130,7 @@ class MarketFactors(Factors):
             pd.DataFrame: 수익률과 beta가 합해진 데이터
         """
         factors = ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA']
-        dfRtn_add_dfBetas.loc[:, factors] =  dfRtn_add_dfBetas.groupby('Symbol')[factors].apply(lambda x: x.fillna(x.mean()))
+        dfRtn_add_dfBetas.loc[:, factors] =  dfRtn_add_dfBetas.groupby('ticker')[factors].apply(lambda x: x.fillna(x.mean()))
         return dfRtn_add_dfBetas
     
     
@@ -178,7 +178,7 @@ class LaggedReturns(Factors):
     
     def _calculate_factors(self)->pd.DataFrame:
         for t in range(1, 7):
-            self._dfRtn[f'return_1m_t-{t}'] =  self._dfRtn.groupby(level='Symbol').return_1m.shift(t)
+            self._dfRtn[f'return_1m_t-{t}'] =  self._dfRtn.groupby(level='ticker').return_1m.shift(t)
         return self._dfRtn
         
 # ===============================================
@@ -190,7 +190,7 @@ class HoldingPeriodReturns(Factors):
 
     def _calculate_factors(self)->pd.DataFrame:
         for t in [1,2,3,6,12]:
-            self._dfRtn[f'target_{t}m'] = self._dfRtn.groupby(level='Symbol')[f'return_{t}m'].shift(-t)
+            self._dfRtn[f'target_{t}m'] = self._dfRtn.groupby(level='ticker')[f'return_{t}m'].shift(-t)
         return self._dfRtn
     
 # ===============================================
@@ -224,7 +224,7 @@ class DynamicSizeFactors(Factors):
     def _calculate_sizeFactors(self, dfPrices:pd.DataFrame, dfRtn:pd.DataFrame):
         sizeFactor = (dfPrices
                         .loc[dfRtn.index.get_level_values('Date').unique(),
-                            dfRtn.index.get_level_values('Symbol').unique()]
+                            dfRtn.index.get_level_values('ticker').unique()]
                         .sort_index(ascending=False)
                         .pct_change()
                         .fillna(0)
@@ -242,7 +242,7 @@ class SectorFactors(Factors):
         
     def _calculate_factors(self) -> pd.DataFrame:
         sector = pd.DataFrame(self._profile['sector'])
-        sector.index.name='Symbol'
+        sector.index.name='ticker'
         self._dfRtn= self._dfRtn.join(sector)
         self._dfRtn.sector = self._dfRtn.sector.fillna('Unknown')
         return self._dfRtn
