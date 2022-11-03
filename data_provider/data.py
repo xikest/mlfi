@@ -22,7 +22,7 @@ class Data:
         #                     print(f'{symbol},prices: {e}')
         #                     pass
         @staticmethod
-        def load_from_web(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
+        def load_from_web(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31', columns_data = ['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']) -> pd.DataFrame:
             """
             pandaDatareader에서 데이터를 받아온다.
             
@@ -44,11 +44,13 @@ class Data:
             2020-01-06	AAPL	73.447502	74.989998	73.187500	74.949997	118387200.0	73.548637
             2020-01-07	AAPL	74.959999	75.224998	74.370003	74.597504	108872000.0	73.202744
             """
+            
+            
             for symbol in symbols: 
                 try:
                     df = web.DataReader(symbol, 'yahoo', start=start_date, end=end_date)
                     df['Symbol']=symbol
-                    yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+                    yield  df.reset_index().set_index(['Date','Symbol']).loc[:,columns_data] #yahoo: 'Adj Close'
                 except Exception as e:
                     print(f'{symbol},prices: {e}')
                     pass
@@ -69,7 +71,7 @@ class Data:
                             
 
         @staticmethod
-        def load_from_fdr(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
+        def load_from_fdr(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31', columns_data = ['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']) -> pd.DataFrame:
             """
             FinacialDatareader에서 데이터를 받아온다.
             Args:
@@ -84,7 +86,7 @@ class Data:
                 try:
                     df = fdr.DataReader(symbol, start=start_date, end=end_date)
                     df['Symbol']=symbol
-                    yield  df.reset_index().set_index(['Date','Symbol']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+                    yield  df.reset_index().set_index(['Date','Symbol']).loc[:,columns_data] #yahoo: 'Adj Close'
                 except Exception as e:
                     print(f'{symbol},prices: {e}')
                     pass
