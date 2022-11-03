@@ -12,8 +12,11 @@ class Returns:
         if self._data is None: self._data = self._drop_less_than_periods(self._calculate_rtn(self._dfPrices))
         return self._data
     
-    def _calculate_rtn(self, dfPrices:pd.DataFrame, lags = [1, 2, 3, 6, 9, 12], outlier_cutoff = 0.01, period:str ='M') -> pd.DataFrame:
+    def _calculate_rtn(self, dfPrices:pd.DataFrame,  period:str ='M') -> pd.DataFrame:
+        outlier_cutoff = 0.01
         data = pd.DataFrame()
+        lags = [1, 2, 3, 6, 9, 12]
+        
         dfPrices = dfPrices.resample(period).last() 
         dfPrices.columns.name='ticker'
         for lag in lags:
@@ -26,17 +29,18 @@ class Returns:
                                     .pow(1/lag)
                                     .sub(1)
                                     )
-        return data.swaplevel().dropna()
+        data.swaplevel().dropna()
+        return data
 
     def _drop_less_than_periods(self, data:pd.DataFrame, periods='M'):
         if periods is 'M' :    min_obs = 120
         elif periods is 'W' :   min_obs = 120 * 52
-        idx = pd.IndexSlice
         nobs = data.stack().groupby(level='ticker').size()
         keep = nobs[nobs>min_obs].index
-        return data.loc[idx[keep,:], :]
+        data = data.loc[pd.IndexSlice[keep,:], :]
+        return data
 
-    def plot_correlaton_by(self, df_rtn:pd.DataFrame) -> pd.DataFrame:
+    def plot_correlaton(self) -> pd.DataFrame:
         """
         데이터의 correlation을 계산하여 clustermap 그래프를 보여준다.
 
