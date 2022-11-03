@@ -29,16 +29,15 @@ class Returns:
                                     .pow(1/lag)
                                     .sub(1)
                                     )
-        data.swaplevel().dropna()
-        return data
+        return data.swaplevel().dropna()
 
     def _drop_less_than_periods(self, data:pd.DataFrame, periods='M'):
         if periods is 'M' :    min_obs = 120
         elif periods is 'W' :   min_obs = 120 * 52
+        idx = pd.IndexSlice
         nobs = data.stack().groupby(level='ticker').size()
         keep = nobs[nobs>min_obs].index
-        data = data.loc[pd.IndexSlice[keep,:], :]
-        return data
+        return data.loc[idx[keep,:], :]
 
     def plot_correlaton(self) -> pd.DataFrame:
         """
