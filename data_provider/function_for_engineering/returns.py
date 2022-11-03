@@ -8,7 +8,6 @@ class Returns:
         self._data = None
         self._dfPrices = dfPrices
         
-    @property
     def get_data(self):
         if self._data is None: self._data = self._drop_less_than_periods(self._calculate_rtn(self._dfPrices))
         return self._data
