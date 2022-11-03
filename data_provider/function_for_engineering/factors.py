@@ -54,7 +54,7 @@ class MarketFactors(Factors):
     def _calculate_factors(self) -> pd.DataFrame:
         dfRtn = self._calculate_rollingFactorBetas(self._dfRtn, self._dfFactor) # -> dfRtn_add_Factor_sub_Rf
         dfBetas = self._calculate_betas(dfRtn)
-        dfRtn = self._merge_betas_and_rtn(dfRtn, dfBetas) #-> dfRtn_add_dfBetas
+        dfRtn = self._merge_rtn_and_betas(dfRtn, dfBetas) #-> dfRtn_add_dfBetas
         dfRtn = self._impute_missingFactorBetas(dfRtn)
         return dfRtn
         
