@@ -8,7 +8,7 @@ from .function_for_engineering.factors import MarketFactors, MomentumFactors, Da
 class DataEngineer:
     """ 데이터를 가공한다.
     """
-    def __init__(self, dfPrices:pd.DataFrame, dfFactors):
+    def __init__(self, dfPrices:pd.DataFrame, dfFactors:pd.DataFrame, dfprofiles:pd.DataFrame):
         """_summary_
 
         Args:
@@ -18,6 +18,7 @@ class DataEngineer:
         self._data = None
         self._dfPrices = dfPrices
         self._dfFactors = dfFactors
+        self._dfprofiles = dfprofiles
         pass
     
     def get_data(self):
@@ -32,9 +33,20 @@ class DataEngineer:
         dfRtn = DateIndicators(dfRtn).get_data()
         dfRtn = LaggedReturns(dfRtn).get_data()
         dfRtn = HoldingPeriodReturns(dfRtn).get_data()
-        dfRtn = DynamicSizeFactors(dfRtn).get_data()    
-        dfRtn = SectorFactors(dfRtn).get_data()  
+        dfRtn = DynamicSizeFactors(dfRtn,self._dfPrices, self._dfprofiles).get_data()  
+        dfRtn = SectorFactors(dfRtn, self._dfprofiles).get_data()  
         dfRtn = DummyVariables(dfRtn).get_data() 
         return dfRtn 
 
     
+_dfFactors = dfFFfactors
+dfRtn = Returns(dfPrices).get_data()
+
+dfRtn  = MarketFactors(dfRtn, _dfFactors).get_data()
+dfRtn = MomentumFactors(dfRtn).get_data()
+dfRtn = DateIndicators(dfRtn).get_data()
+dfRtn = LaggedReturns(dfRtn).get_data()
+dfRtn = HoldingPeriodReturns(dfRtn).get_data()
+dfRtn = DynamicSizeFactors(dfRtn, dfPrices, dfprofilesSnp500).get_data()    
+dfRtn = SectorFactors(dfRtn, dfprofilesSnp500).get_data()  
+dfRtn = DummyVariables(dfRtn).get_data() 
