@@ -8,7 +8,7 @@ from .function_for_engineering.factors import MarketFactors, MomentumFactors, Da
 class DataEngineer:
     """ 데이터를 가공한다.
     """
-    def __init__(self, dfPrices:pd.DataFrame, dfFactors:"F-F_Research_Data_5_Factors_2x3"):
+    def __init__(self, dfPrices:pd.DataFrame, dfFactors):
         """_summary_
 
         Args:
