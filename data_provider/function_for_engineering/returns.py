@@ -29,7 +29,7 @@ class Returns:
                                     )
         return data.swaplevel().dropna()
 
-    def _drop_less_than_periods(self, data:pd.DataFrame, periods):
+    def _drop_less_than_periods(self, data:pd.DataFrame, periods='M'):
         if periods is 'M' :    min_obs = 120
         elif periods is 'W' :   min_obs = 120 * 52
         idx = pd.IndexSlice
