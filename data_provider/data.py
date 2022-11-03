@@ -22,7 +22,7 @@ class Data:
         #                     print(f'{symbol},prices: {e}')
         #                     pass
         @staticmethod
-        def load_from_web(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31', columns_data = ['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']) -> pd.DataFrame:
+        def load_from_web(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31', columns_data = ['Adj Close']) -> pd.DataFrame:
             """
             pandaDatareader에서 데이터를 받아온다.
             
@@ -30,7 +30,7 @@ class Data:
                 symbol (str): 주식의 심볼
                 start_date (_type_): 조회 시작일
                 end_date (_type_): 조회 종료일
-
+                columns_data = ['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']
             Yields:
                 pd.DataFrame: 요청된 symbols의 adj close 데이터를 반환한다. 
                 
@@ -71,7 +71,7 @@ class Data:
                             
 
         @staticmethod
-        def load_from_fdr(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31', columns_data = ['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']) -> pd.DataFrame:
+        def load_from_fdr(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31', columns_data = ['Adj Close']) -> pd.DataFrame:
             """
             FinacialDatareader에서 데이터를 받아온다.
             Args:
@@ -79,6 +79,7 @@ class Data:
                         source (str): 데이터의 소스: yahoo와 FF 데이터_
                         start_date (_type_): 조회 시작일
                         end_date (_type_): 조회 종료일
+                        columns_data = ['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']
             Yields:
                         pd.DataFrame: 요청된 symbols의 adj close 데이터를 반환한다. 
             """
