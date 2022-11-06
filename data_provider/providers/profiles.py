@@ -1,33 +1,83 @@
-from typing import List, Iterator
-import asyncio
+from typing import List, Iterator, Generator
 import pandas as pd
 import yfinance as yf
-import asyncio
+# import asyncio
+from dataclasses import dataclass
 
+@dataclass
+class Info:
+    ticker:str = None
+    name:str=None
+    gics_sector:str=None
+    gics_sub_industry:str=None
+    location:str=None
+    first_added:str=None
+    cik:str=None
+    founded:str=None
+    profiles:pd.DataFrame=None
+        
+        
 
 
 class Profiles:
 
     @staticmethod 
-    def load_info_snp500() -> pd.DataFrame:
+    
+    def load_info(market:str='snp500') -> Generator[Info]:
+        """ 입력된 시장에 맞는 정보를 제공한다.
+
+        Args:
+            market (str, optional): 시장 정보. Defaults to 'snp500'.
+
+        Yields:
+            Generator[Info]: ticker 별로 정보를 생성한다(generator)
+        """
+
+        if market == 'snp500':
+            yield from Profiles.load_info_snp500()
+        
+    @staticmethod 
+    def _load_info_snp500() -> Generator[Info]:
         url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
         df = pd.read_html(url, header=0)[0]
-        df.columns = ['ticker', 'name', 'sec_filings', 'gics_sector', 'gics_sub_industry', 'location', 'first_added', 'cik', 'founded']
-        df = df.drop('sec_filings', axis=1)
-        df.loc[:,'ticker'] = df.loc[:, 'ticker'].map(lambda x:x.replace('.' , '-'))
-        df.set_index('ticker', inplace=True)
-        return df
+        df.loc[:,'Symbol'] = df.loc[:, 'Symbol'].map(lambda x:x.replace('.' , '-'))
+        
+        for _, info in df.iterrows():
+           yield Info(ticker=info['Symbol'],
+                                name=info['Security'],
+                                gics_sector=info['GICS Sector'],
+                                gics_sub_industry = info['GICS Sub-Industry'],
+                                location=info['Headquarters Location'],
+                                first_added=info['Date first added'],
+                                cik=info['CIK'],
+                                founded=info['Founded'],
+                                profiles=pd.Series({profile:yf.Ticker(info['Symbol']).info.get(profile) for profile in ['longName', 'industry', 'sector' ,'enterpriseValue']})
+           )
+            
+         
+         
+            
+        # yield from [Info(ticker=info['Symbol'],
+        #                     name=info['Security'],
+        #                     gics_sector=info['GICS Sector'],
+        #                     gics_sub_industry = info['GICS Sub-Industry'],
+        #                     location=info['Headquarters Location'],
+        #                     first_added=info['Date first added'],
+        #                     cik=info['CIK'],
+        #                     founded=info['Founded'],
+        #                     ) for _, info in df.iterrows()]
+
     
-    @staticmethod   
-    def generate_by(symbols:List[str])-> Iterator[pd.Series]:
-            for symbol in symbols:
-                try:
-                    ds = pd.Series({profile:yf.Ticker(symbol).info.get(profile) for profile in ['longName', 'industry', 'sector' ,'enterpriseValue']})
-                    ds.name=symbol
-                    yield ds
-                except Exception as e:
-                    print(f'{symbol},generate_by: {e}')
-                    pass
+    # @staticmethod   
+    # def generate_by(symbols:List[str])-> Generator[pd.Series]:
+    #         for symbol in symbols:
+    #             try:
+    #                 ds = pd.Series({profile:yf.Ticker(symbol).info.get(profile) for profile in ['longName', 'industry', 'sector' ,'enterpriseValue']})
+    #                 ds.name=symbol
+    #                 yield ds
+    #             except Exception as e:
+    #                 print(f'{symbol},generate_by: {e}')
+    #                 pass
                     
     # @staticmethod      
     # async   def generate_by(symbols:List[str])-> Iterator[pd.Series]:

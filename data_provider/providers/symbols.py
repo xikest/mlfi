@@ -1,9 +1,6 @@
 from typing import List, Iterator
-import asyncio
-import pandas as pd
-import yfinance as yf
 import FinanceDataReader as fdr  # pip install -U finance-datareader
-
+# import asyncio
 
 
 class Symbols: 
