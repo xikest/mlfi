@@ -198,14 +198,14 @@ class HoldingPeriodReturns(Factors):
 # ===============================================
 
 class DynamicSizeFactors(Factors):
-    def __init__(self, dfRtn:pd.DataFrame, dfPrices:pd.DataFrame, profile:pd.Series): 
+    def __init__(self, dfRtn:pd.DataFrame, dfPrices:pd.DataFrame, dfProfiles:pd.DataFrame): 
         super().__init__(dfRtn)
         self._dfPrices = dfPrices
-        self._profile= profile
+        self._dfProfiles= dfProfiles
         
         
     def _calculate_factors(self)->pd.DataFrame:
-        msize = self._calculate_msize(self._dfPrices, self._dfRtn, self._profile)
+        msize = self._calculate_msize(self._dfPrices, self._dfRtn, self._dfProfiles)
         self._dfRtn['msize'] = (msize.apply(lambda x: pd.qcut(x, q=10, labels=list(range(1, 11)))
                             .astype(int), axis=1)
                     .stack()
@@ -214,10 +214,10 @@ class DynamicSizeFactors(Factors):
         return self._dfRtn
 
 
-    def _calculate_msize(self, dfPrices:pd.DataFrame, dfRtn:pd.DataFrame, profile:pd.Series) -> pd.DataFrame:
+    def _calculate_msize(self, dfPrices:pd.DataFrame, dfRtn:pd.DataFrame, dfProfiles:pd.DataFrame) -> pd.DataFrame:
         sizeFactor = self._calculate_sizeFactors(dfPrices, dfRtn)
         msize = (sizeFactor
-            .mul(profile
+            .mul(dfProfiles
                 .loc[sizeFactor.columns, 'enterpriseValue'])).dropna(axis=1, how='all')
         return msize
 

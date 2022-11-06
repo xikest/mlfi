@@ -11,48 +11,50 @@ class Context:
         market:Optional[str]=None
         prices:pd.DataFrame = None
         profiles:pd.DataFrame = None
-        factos:pd.DataFrame = None
-        data :pd.DataFrame = None
-        descr:Optional[str] = None
+        factors:pd.DataFrame = None
+        data_engineered :pd.DataFrame = None
         updated_date:pd.Timestamp = None
         
 
 class Data:
     def __init__(self, market:str='snp500'):
-        self._market = market
-        self._context:Context = None
-        prepared = self.load_data()
-        if prepared: pass
-        else: self._prepare_data()
+        self.context = Context(market=market)
+        self.context = self._load_data(self.context)
+        if self.context is None: self.context = self._prepare_data(self.context)
         pass
     
-    def update(self):
-        if self._context.updated_date is not dt.datetime.today():
-            self._prepare_data()
-        pass
+    def get_data(self):
+        return self.context
         
-    def load_data(self):
-        SUCESS, FAIL = True, False
+    def renew(self):
+        if self._context.updated_date is not dt.datetime.today():
+            self._prepare_data(self.context)
+        self._save_data(self.context)
+        return print("updated")
+        
+    def _load_data(self, context:Context):
+        FAIL = False
         try:
-            self._context = FunctionPath.HDFS.load_HDFS(f'{self._market}','data.h5')
-            return SUCESS
+            return FunctionPath.HDFS.load_HDFS(f'{context._market}','data.h5')
         except:
             return FAIL
     
-    def save_data(self):
-        FunctionPath.HDFS.save_to_HDFS(self._context, f'{self._market}','data.h5')
-        pass
+    def _save_data(self, context:Context):
+        FunctionPath.HDFS.save_to_HDFS(context, f'{context._market}','data.h5')
+        return print("saved")
     
-    def _prepare_data(self):
-        tickers = [info.ticker for info in Profiles.load_info(self._market)]  #정보 객체에서 ticket만 추출하여 반환
+    def _prepare_data(self, context:Context):
+        tickers = [profile.ticker for profile in Profiles.load_profiles(context._market)]  #정보 객체에서 ticket만 추출하여 반환
+        
         gen_prices = Prices.load_from_web(tickers)  #가격 반환을 위한 제너레이터
-        gen_profiles = Profiles.load_info(self._market)  # 프로파일을 위한 제너레이터
+        gen_profiles = Profiles.load_profiles(context._market)  # 프로파일을 위한 제너레이터
         gen_ff_factors = FamaFrench.load_from_web(['F-F_Research_Data_5_Factors_2x3'])
         
-        self._context.prices = pd.concat([price for price in gen_prices]).loc[:,'Adj Close'].unstack('ticker')
-        self._context.factors = pd.concat([factor for factor in gen_ff_factors])
-        self._context.profiles = pd.DataFrame([info.profiles for info in gen_profiles])
-        self._context.data_engineered = DataEngineer(self._context.prices, self._context.factors, self._context.profiles).get_data()          
-        self._context.updated_date:pd.Timestamp = pd.to_datetime(dt.datetime.today())
-        pass
+        context.prices = pd.concat([price for price in gen_prices]).loc[:,'Adj Close'].unstack('ticker')
+        context.factors = pd.concat([factor for factor in gen_ff_factors])
+        context.profiles = pd.DataFrame([info.profiles for info in gen_profiles])
+        context.data_engineered = DataEngineer(context.prices, context.factors, context.profiles).get_data()      
+        context.updated_date:pd.Timestamp = pd.to_datetime(dt.datetime.today())
+        self._save_data(context)
+        return context
     
