@@ -51,7 +51,7 @@ class Data:
         
         context.prices = pd.concat([price for price in gen_prices]).loc[:,'Adj Close'].unstack('ticker')
         context.factors = pd.concat([factor for factor in gen_ff_factors])
-        context.profiles = pd.DataFrame([info.profiles for info in gen_profiles])
+        context.profiles = pd.DataFrame([profile for profile in gen_profiles])
         context.data_engineered = DataEngineer(context.prices, context.factors, context.profiles).get_data()      
         context.updated_date:pd.Timestamp = pd.to_datetime(dt.datetime.today())
         self._save_data(context)
