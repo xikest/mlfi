@@ -49,7 +49,7 @@ class Data:
         gen_profiles = Profiles.load_profiles(context.market)  # 프로파일을 위한 제너레이터
         context.profiles = pd.DataFrame([profile for profile in gen_profiles]).set_index('ticker')
         
-        tickers = context.profiles.reset_index().loc['ticker'] #정보 객체에서 ticket만 추출하여 반환
+        tickers = context.profiles.reset_index().loc[:,'ticker'] #정보 객체에서 ticket만 추출하여 반환
         gen_prices = Prices.load_from_web(tickers)  #가격 반환을 위한 제너레이터
         
         prices_volumes = pd.concat([price for price in gen_prices]).loc[:,['Adj Close', 'Volume']].unstack('ticker')
