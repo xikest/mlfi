@@ -1,4 +1,4 @@
-from typing import List, Iterator, Generator
+from typing import List, Iterator
 import pandas as pd
 import yfinance as yf
 # import asyncio
@@ -23,7 +23,7 @@ class Profiles:
 
     @staticmethod 
     
-    def load_info(market:str='snp500') -> Generator[Info]:
+    def load_info(market:str='snp500') -> Iterator[Info]:
         """ 입력된 시장에 맞는 정보를 제공한다.
 
         Args:
@@ -37,7 +37,7 @@ class Profiles:
             yield from Profiles.load_info_snp500()
         
     @staticmethod 
-    def _load_info_snp500() -> Generator[Info]:
+    def _load_info_snp500() -> Iterator[Info]:
         url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
         df = pd.read_html(url, header=0)[0]
         df.loc[:,'Symbol'] = df.loc[:, 'Symbol'].map(lambda x:x.replace('.' , '-'))
