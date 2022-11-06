@@ -20,7 +20,7 @@ class Data:
     def __init__(self, market:str='snp500'):
         self.context = Context(market=market)
         self.context = self._load_data(self.context)
-        if self.context is None: self.context = self._prepare_data(self.context)
+        if self.context.updated_date is None: self.context = self._prepare_data(self.context)
         pass
     
     def get_data(self):
@@ -33,11 +33,10 @@ class Data:
         return print("updated")
         
     def _load_data(self, context:Context):
-        FAIL = False
         try:
             return FunctionPath.HDFS.load_HDFS(f'{context.market}','data.h5')
         except:
-            return FAIL
+            return context
     
     def _save_data(self, context:Context):
         FunctionPath.HDFS.save_to_HDFS(context, f'{context.market}','data.h5')
