@@ -34,12 +34,12 @@ class Data:
         
     def _load_data(self, context:Context):
         try:
-            return FunctionPath.HDFS.load_HDFS(f'{context.market}','data.h5')
+            return FunctionPath.Pickle.load_from_pickle('data')
         except:
             return context
     
     def _save_data(self, context:Context):
-        FunctionPath.HDFS.save_to_HDFS(context, f'{context.market}','data.h5')
+        FunctionPath.Pickle.save_to_pickle(context, f'{context.market}','data')
         return print("saved")
     
     def _prepare_data(self, context:Context):
