@@ -34,12 +34,12 @@ class Data:
         
     def _load_data(self, context:Context):
         try:
-            return FunctionPath.Pickle.load_from_pickle('data')
+            return FunctionPath.Pickle.load_from_pickle(f'{context.market}')
         except:
             return context
     
     def _save_data(self, context:Context):
-        FunctionPath.Pickle.save_to_pickle(context, f'{context.market}','data')
+        FunctionPath.Pickle.save_to_pickle(context, f'{context.market}')
         return print("saved")
     
     def _prepare_data(self, context:Context):
@@ -54,8 +54,6 @@ class Data:
         context.profiles = pd.DataFrame([profile for profile in gen_profiles]).set_index('ticker')
         context.data_engineered = DataEngineer(context.prices, context.factors, context.profiles).get_data()      
         context.updated_date:pd.Timestamp = pd.to_datetime(dt.datetime.today())
-        temp_list=[]
-        temp_list.append(context)
-        self._save_data(temp_list)
+        self._save_data(context)
         return context
     
