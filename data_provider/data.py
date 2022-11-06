@@ -52,8 +52,11 @@ class Data:
         tickers = context.profiles.reset_index().loc['ticker'] #정보 객체에서 ticket만 추출하여 반환
         gen_prices = Prices.load_from_web(tickers)  #가격 반환을 위한 제너레이터
         
-        context.prices = pd.concat([price for price in gen_prices]).loc[:,'Adj Close'].unstack('ticker')
+        prices_volumes = pd.concat([price for price in gen_prices]).loc[:,['Adj Close', 'Volume']].unstack('ticker')
         
+        context.prices = prices_volumes.loc[:,'Adj Close']
+        context.volumes = prices_volumes.loc[:,'Volume']
+        # pd.concat([price for price in gen_prices]).loc[:,'Adj Close'].unstack('ticker')
         
         gen_ff_factors = FamaFrench.load_from_web(['F-F_Research_Data_5_Factors_2x3'])
         context.factors = pd.concat([factor for factor in gen_ff_factors])
