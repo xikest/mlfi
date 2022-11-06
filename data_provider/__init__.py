@@ -1,1 +1,1 @@
-from .data import Contents as Data
+from .data import Data
