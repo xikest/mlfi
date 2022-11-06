@@ -53,7 +53,7 @@ class Data:
         context.factors = pd.concat([factor for factor in gen_ff_factors])
         context.profiles = pd.DataFrame([profile for profile in gen_profiles]).set_index('ticker')
         context.data_engineered = DataEngineer(context.prices, context.factors, context.profiles).get_data()      
-        context.updated_date:pd.Timestamp = pd.to_datetime(dt.datetime.today())
+        context.updated_date:pd.Timestamp = dt.datetime.today().strftime('%Y-%m-%d')
         self._save_data(context)
         return context
     
