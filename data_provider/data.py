@@ -35,19 +35,19 @@ class Data:
     def _load_data(self, context:Context):
         FAIL = False
         try:
-            return FunctionPath.HDFS.load_HDFS(f'{context._market}','data.h5')
+            return FunctionPath.HDFS.load_HDFS(f'{context.market}','data.h5')
         except:
             return FAIL
     
     def _save_data(self, context:Context):
-        FunctionPath.HDFS.save_to_HDFS(context, f'{context._market}','data.h5')
+        FunctionPath.HDFS.save_to_HDFS(context, f'{context.market}','data.h5')
         return print("saved")
     
     def _prepare_data(self, context:Context):
-        tickers = [profile.ticker for profile in Profiles.load_profiles(context._market)]  #정보 객체에서 ticket만 추출하여 반환
+        tickers = [profile.ticker for profile in Profiles.load_profiles(context.market)]  #정보 객체에서 ticket만 추출하여 반환
         
         gen_prices = Prices.load_from_web(tickers)  #가격 반환을 위한 제너레이터
-        gen_profiles = Profiles.load_profiles(context._market)  # 프로파일을 위한 제너레이터
+        gen_profiles = Profiles.load_profiles(context.market)  # 프로파일을 위한 제너레이터
         gen_ff_factors = FamaFrench.load_from_web(['F-F_Research_Data_5_Factors_2x3'])
         
         context.prices = pd.concat([price for price in gen_prices]).loc[:,'Adj Close'].unstack('ticker')
