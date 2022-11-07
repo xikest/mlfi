@@ -49,7 +49,7 @@ class Data:
         return self._context.updated_date  
     
     @property
-    def prices(self):
+    def data_engineered(self):
         return self._context.data_engineered  
     
     def update(self):  # 데이터 갱신 차후 구현
