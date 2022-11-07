@@ -31,7 +31,7 @@ class DataEngineer:
         dfRtn = Returns(dfPrices, period).get_data()
         dfRtn = MarketFactors(dfRtn, dfFactors, period).get_data()
         dfRtn = MomentumFactors(dfRtn, period).get_data()
-        dfRtn = DateIndicators(dfRtn, period).get_data()
+        dfRtn = DateIndicators(dfRtn).get_data()
         dfRtn = LaggedReturns(dfRtn, period).get_data()
         dfRtn = HoldingPeriodReturns(dfRtn, period).get_data()
         dfRtn = DynamicSizeFactors(dfRtn,dfPrices, dfprofiles).get_data()  
