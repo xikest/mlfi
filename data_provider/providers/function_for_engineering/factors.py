@@ -95,7 +95,7 @@ class MarketFactors(Factors):
         elif 'w' :   T =  24 * 52
         dfBetas = (dfRtnFactorSubRf.groupby(level='ticker',
                                     group_keys=False)
-                .apply(lambda x: RollingOLS(endog=x.loc[:,f"return_1{period}"],
+                .apply(lambda x: RollingOLS(endog=x[f"return_1{period}"],
                                             exog=sm.add_constant(x.drop(f'return_1{period}', axis=1)),
                                             window=min(T, x.shape[0]-1))
                         .fit(params_only=True)
@@ -153,8 +153,8 @@ class MomentumFactors(Factors):
             pd.DataFrame: 모멘텀 factor가 추가된 수익률 데이터
         """
         for lag in [2,3,6,9,12]: 
-            self._dfRtn[f'momentum_{lag}'] = self._dfRtn[f'return_{lag}{self._period}'].sub(self._dfRtn.loc[f"return_1{self._period}"])
-        self._dfRtn[f'momentum_3_12'] = self._dfRtn[f'return_12{self._period}'].sub(self._dfRtn.loc[f"return_3{self._period}"])
+            self._dfRtn[f'momentum_{lag}'] = self._dfRtn[f'return_{lag}{self._period}'].sub(self._dfRtn[f"return_1{self._period}"])
+        self._dfRtn[f'momentum_3_12'] = self._dfRtn[f'return_12{self._period}'].sub(self._dfRtn[f"return_3{self._period}"])
         return self._dfRtn
         
 # ===============================================
@@ -179,7 +179,7 @@ class LaggedReturns(Factors):
     
     def _calculate_factors(self)->pd.DataFrame:
         for t in range(1, 7):
-            self._dfRtn[f'return_1{self._period}_t-{t}'] =  self._dfRtn.groupby(level='ticker').loc[:,f"return_1{self._period}"].shift(t)
+            self._dfRtn[f'return_1{self._period}_t-{t}'] =  self._dfRtn.groupby(level='ticker')[f"return_1{self._period}"].shift(t)
         return self._dfRtn
         
 # ===============================================
