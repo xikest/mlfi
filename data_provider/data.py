@@ -93,8 +93,8 @@ class Data:
         # context.profiles = pd.DataFrame([profile for profile in gen_profiles]).set_index('ticker') #삭제
         
         # 데이터 엔지니어링 작업
-        context.data_engineered ={'w': DataEngineer(context.prices, context.factors, context.profiles, period='w')}.get_data() 
-        context.data_engineered = {'m':DataEngineer(context.prices, context.factors, context.profiles, period='m')}.get_data() 
+        context.data_engineered ={'w': DataEngineer(context.prices, context.factors, context.profiles, period='w').get_data() }
+        context.data_engineered = {'m':DataEngineer(context.prices, context.factors, context.profiles, period='m').get_data() }
         
         # 업데이트 일자 기록     
         context.updated_date:pd.Timestamp = dt.datetime.today().strftime('%Y-%m-%d')
