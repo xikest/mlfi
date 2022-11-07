@@ -4,7 +4,7 @@ import seaborn as sns
 
 class Returns:
     
-    def __init__(self, dfPrices:pd.DataFrame, period:str ='M'):
+    def __init__(self, dfPrices:pd.DataFrame, period:str ='m'):
         self._data = None
         self._dfPrices = dfPrices
         self._period = period
@@ -32,7 +32,7 @@ class Returns:
                                     )
         return data.swaplevel().dropna()
 
-    def _drop_less_than_periods(self, data:pd.DataFrame, period:str='M'):
+    def _drop_less_than_periods(self, data:pd.DataFrame, period:str='m'):
         if period is 'm' :    min_obs = 120
         elif period is 'w' :   min_obs = 120 * 52
         idx = pd.IndexSlice
