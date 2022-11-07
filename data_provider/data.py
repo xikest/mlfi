@@ -19,22 +19,46 @@ class Context:
 
 class Data:
     def __init__(self, market:str='snp500'):
-        self.context = Context(market=market)
-        self.context = self._load_data(self.context)
-        if self.context.updated_date is None: self.context = self._prepare_data(self.context)
+        self._context = Context(market=market)
+        self._context = self._load_data(self._context)
+        if self._context.updated_date is None: self._context = self._prepare_data(self._context)
         pass
     
-    def get_data(self):
-        return self.context
-        
-        
+    @property
+    def market(self):
+        return self._context.market
+    
+    @property
+    def prices(self):
+        return self._context.prices
+    
+    @property
+    def volumes(self):
+        return self._context.volumes  
+    
+    @property
+    def profiles(self):
+        return self._context.profiles  
+    
+    @property
+    def factors(self):
+        return self._context.factors  
+    
+    @property
+    def updated_date(self):
+        return self._context.updated_date  
+    
+    @property
+    def prices(self):
+        return self._context.data_engineered  
+    
     def update(self):  # 데이터 갱신 차후 구현
         pass
         
     def renew(self): # 데이터 새로 받기
         if self._context.updated_date is not dt.datetime.today().strftime('%Y-%m-%d'):
-            self._prepare_data(self.context)
-        self._save_data(self.context)
+            self._prepare_data(self._context)
+        self._save_data(self._context)
         return print("updated")
         
     def _load_data(self, context:Context): #불러오기

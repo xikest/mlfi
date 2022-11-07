@@ -8,7 +8,7 @@ from .function_for_engineering.factors import MarketFactors, MomentumFactors, Da
 class DataEngineer:
     """ 데이터를 가공한다.
     """
-    def __init__(self, dfPrices:pd.DataFrame, dfFactors:pd.DataFrame, dfprofiles:pd.DataFrame):
+    def __init__(self, dfPrices:pd.DataFrame, dfFactors:pd.DataFrame, dfprofiles:pd.DataFrame, period='m'):
         """_summary_
 
         Args:
@@ -19,21 +19,22 @@ class DataEngineer:
         self._dfPrices = dfPrices
         self._dfFactors = dfFactors
         self._dfprofiles = dfprofiles
+        self._period = period
         pass
     
     def get_data(self):
-        if self._data is None:  self._data = self.engineering_data()
+        if self._data is None:  self._data = self.engineering_data(self._dfPrices, self._dfprofiles, self._dfFactors, self._period)
         return self._data
         
         
-    def engineering_data(self):
-        dfRtn = Returns(self._dfPrices).get_data()
-        dfRtn = MarketFactors(dfRtn, self._dfFactors).get_data()
-        dfRtn = MomentumFactors(dfRtn).get_data()
-        dfRtn = DateIndicators(dfRtn).get_data()
-        dfRtn = LaggedReturns(dfRtn).get_data()
-        dfRtn = HoldingPeriodReturns(dfRtn).get_data()
-        dfRtn = DynamicSizeFactors(dfRtn,self._dfPrices, self._dfprofiles).get_data()  
-        dfRtn = SectorFactors(dfRtn, self._dfprofiles).get_data()  
+    def engineering_data(self, dfPrices:pd.DataFrame, dfprofiles:pd.DataFrame, dfFactors:pd.DataFrame, period:str):
+        dfRtn = Returns(dfPrices, period).get_data()
+        dfRtn = MarketFactors(dfRtn, dfFactors).get_data()
+        dfRtn = MomentumFactors(dfRtn, period).get_data()
+        dfRtn = DateIndicators(dfRtn, period).get_data()
+        dfRtn = LaggedReturns(dfRtn, period).get_data()
+        dfRtn = HoldingPeriodReturns(dfRtn, period).get_data()
+        dfRtn = DynamicSizeFactors(dfRtn,dfPrices, dfprofiles).get_data()  
+        dfRtn = SectorFactors(dfRtn, dfprofiles).get_data()  
         dfRtn = DummyVariables(dfRtn).get_data() 
         return dfRtn 

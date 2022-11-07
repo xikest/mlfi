@@ -5,7 +5,7 @@ import statsmodels.api as sm
 
 
 class Factors:
-        def __init__(self, dfRtn:pd.DataFrame):
+        def __init__(self, dfRtn:pd.DataFrame, period:str='M'):
             """
             market Factor 데이터를 계산한다
 
@@ -14,6 +14,7 @@ class Factors:
             """
             self._data = None
             self._dfRtn = dfRtn
+            self._period = period
             
         def get_data(self) -> pd.DataFrame:
             """
@@ -40,7 +41,7 @@ class Factors:
 # market factors 
 # ===============================================
 class MarketFactors(Factors):
-    def __init__(self, dfRtn:pd.DataFrame, dfFactor:"F-F_Research_Data_5_Factors_2x3"):
+    def __init__(self, dfRtn:pd.DataFrame, dfFactor:"F-F_Research_Data_5_Factors_2x3", period:str='m'):
         """
         market Factor 데이터를 계산한다
 
@@ -48,18 +49,18 @@ class MarketFactors(Factors):
             dfRtn (pd.DataFrame): 수익률 데이터
             dfFactor (F): 파머 프렌치 Factor 데이터
         """
-        super().__init__(dfRtn)
+        super().__init__(dfRtn, period)
         self._dfFactor = dfFactor
 
     def _calculate_factors(self) -> pd.DataFrame:
-        dfFactor = self._calculate_rollingFactorBetas(self._dfRtn, self._dfFactor) # -> dfRtn_add_Factor_sub_Rf
-        dfBetas = self._calculate_betas(dfFactor)
+        dfFactor = self._calculate_rollingFactorBetas(self._dfRtn, self._dfFactor, self._period) # -> dfRtn_add_Factor_sub_Rf
+        dfBetas = self._calculate_betas(dfFactor, self._period)
         print(dfBetas)
         self._dfRtn = self._rtn_merge_betas(self._dfRtn, dfBetas)  #-> dfRtn_add_dfBetas
         self._dfRtn = self._impute_missingFactorBetas(self._dfRtn)
         return self._dfRtn
         
-    def _calculate_rollingFactorBetas(self, dfRtn:pd.DataFrame, dfFactor:"F-F_Research_Data_5_Factors_2x3", periods:str = 'M')->pd.DataFrame:
+    def _calculate_rollingFactorBetas(self, dfRtn:pd.DataFrame, dfFactor:"F-F_Research_Data_5_Factors_2x3", period:str = 'm')->pd.DataFrame:
         """
         마켓 beta를 계산한다.
 
@@ -74,12 +75,12 @@ class MarketFactors(Factors):
         # factors = ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA']
         dfFactor_sub_Rf = dfFactor.drop('RF', axis=1)
         dfFactor_sub_Rf.index = dfFactor_sub_Rf.index.to_timestamp()
-        dfFactor_sub_Rf = dfFactor_sub_Rf.resample(periods).last().div(100)
+        dfFactor_sub_Rf = dfFactor_sub_Rf.resample(period).last().div(100)
         dfFactor_sub_Rf.index.name = 'Date'
-        dfFactor = dfFactor_sub_Rf.join(dfRtn['return_1m']).sort_index()
+        dfFactor = dfFactor_sub_Rf.join(dfRtn[f'return_1{period}']).sort_index()
         return dfFactor
 
-    def _calculate_betas(self, dfRtnFactorSubRf:pd.DataFrame, period:str='M')->pd.DataFrame:
+    def _calculate_betas(self, dfRtnFactorSubRf:pd.DataFrame, period:str='m')->pd.DataFrame:
         """
         market beta(시장 민감도)를 계산한다.
 
@@ -90,12 +91,12 @@ class MarketFactors(Factors):
         Returns:
             pd.DataFrame: market beta (시장 민감도)
         """
-        if period is 'M' :   T = 24
-        elif 'W' :   T = 24 * 52
+        if period is 'm' :   T = 24
+        elif 'w' :   T = 5      # 24 * 52
         dfBetas = (dfRtnFactorSubRf.groupby(level='ticker',
                                     group_keys=False)
-                .apply(lambda x: RollingOLS(endog=x.return_1m,
-                                            exog=sm.add_constant(x.drop('return_1m', axis=1)),
+                .apply(lambda x: RollingOLS(endog=x.loc[:,f"return_1{period}"],
+                                            exog=sm.add_constant(x.drop(f'return_1{period}', axis=1)),
                                             window=min(T, x.shape[0]-1))
                         .fit(params_only=True)
                         .params
@@ -139,7 +140,7 @@ class MarketFactors(Factors):
 # momentum factors 
 # ===============================================
 class MomentumFactors(Factors):
-    def __init__(self, dfRtn:pd.DataFrame): super().__init__(dfRtn)
+    def __init__(self, dfRtn:pd.DataFrame, period:str='m'): super().__init__(dfRtn, period)
 
     def _calculate_factors(self)->pd.DataFrame:
         """
@@ -152,8 +153,8 @@ class MomentumFactors(Factors):
             pd.DataFrame: 모멘텀 factor가 추가된 수익률 데이터
         """
         for lag in [2,3,6,9,12]: 
-            self._dfRtn[f'momentum_{lag}'] = self._dfRtn[f'return_{lag}m'].sub(self._dfRtn.return_1m)
-        self._dfRtn[f'momentum_3_12'] = self._dfRtn[f'return_12m'].sub(self._dfRtn.return_3m)
+            self._dfRtn[f'momentum_{lag}'] = self._dfRtn[f'return_{lag}{self._period}'].sub(self._dfRtn.loc[f"return_1{self._period}"])
+        self._dfRtn[f'momentum_3_12'] = self._dfRtn[f'return_12{self._period}'].sub(self._dfRtn.loc[f"return_3{self._period}"])
         return self._dfRtn
         
 # ===============================================
@@ -174,11 +175,11 @@ class DateIndicators(Factors):
 # lagged returns
 # ===============================================
 class LaggedReturns(Factors):
-    def __init__(self, dfRtn:pd.DataFrame): super().__init__(dfRtn)
+    def __init__(self, dfRtn:pd.DataFrame, period:str='m'): super().__init__(dfRtn, period)
     
     def _calculate_factors(self)->pd.DataFrame:
         for t in range(1, 7):
-            self._dfRtn[f'return_1m_t-{t}'] =  self._dfRtn.groupby(level='ticker').return_1m.shift(t)
+            self._dfRtn[f'return_1{self._period}_t-{t}'] =  self._dfRtn.groupby(level='ticker').return_1m.shift(t)
         return self._dfRtn
         
 # ===============================================
@@ -186,11 +187,11 @@ class LaggedReturns(Factors):
 # ===============================================
 
 class HoldingPeriodReturns(Factors):
-    def __init__(self, dfRtn:pd.DataFrame): super().__init__(dfRtn)
+    def __init__(self, dfRtn:pd.DataFrame, period:str='m'): super().__init__(dfRtn, period)
 
     def _calculate_factors(self)->pd.DataFrame:
         for t in [1,2,3,6,12]:
-            self._dfRtn[f'target_{t}m'] = self._dfRtn.groupby(level='ticker')[f'return_{t}m'].shift(-t)
+            self._dfRtn[f'target_{t}{self._period}'] = self._dfRtn.groupby(level='ticker')[f'return_{t}{self._period}'].shift(-t)
         return self._dfRtn
     
 # ===============================================

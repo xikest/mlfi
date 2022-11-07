@@ -1,10 +1,12 @@
-from typing import Generator, List
+from typing import Generator, List, Union
 import pandas as pd
 import pandas_datareader.data as web 
 # from pandas_datareader import wb
 import FinanceDataReader as fdr  # pip install -U finance-datareader
 from tqdm import tqdm
+from dataclasses import dataclass
 # import asyncio
+
 
 
 class Prices:
@@ -20,7 +22,7 @@ class Prices:
     #                     print(f'{symbol},prices: {e}')
     #                     pass
     @staticmethod
-    def load_from_web(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
+    def load_from_web(symbols:List[str]=['AAPL'], start_date='2000-1-1', end_date='2022-12-31') -> pd.DataFrame:
         """
         pandaDatareader에서 데이터를 받아온다.
         
@@ -68,7 +70,7 @@ class Prices:
                         
 
     @staticmethod
-    def load_from_fdr(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
+    def load_from_fdr(symbols:List[str]=['AAPL'], start_date='2000-1-1', end_date='2022-12-31') -> pd.DataFrame:
         """
         FinacialDatareader에서 데이터를 받아온다.
         Args:

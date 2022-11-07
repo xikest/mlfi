@@ -4,15 +4,16 @@ import seaborn as sns
 
 class Returns:
     
-    def __init__(self, dfPrices:pd.DataFrame):
+    def __init__(self, dfPrices:pd.DataFrame, period:str ='M'):
         self._data = None
         self._dfPrices = dfPrices
+        self._period = period
         
     def get_data(self):
-        if self._data is None: self._data = self._drop_less_than_periods(self._calculate_rtn(self._dfPrices))
+        if self._data is None: self._data = self._drop_less_than_periods(self._calculate_rtn(self._dfPrices, self._period))
         return self._data
     
-    def _calculate_rtn(self, dfPrices:pd.DataFrame,  period:str ='M') -> pd.DataFrame:
+    def _calculate_rtn(self, dfPrices:pd.DataFrame,  period:str) -> pd.DataFrame:
         outlier_cutoff = 0.01
         data = pd.DataFrame()
         lags = [1, 2, 3, 6, 9, 12]
@@ -29,11 +30,11 @@ class Returns:
                                     .pow(1/lag)
                                     .sub(1)
                                     )
-        return data.swaplevel().dropna()
+        return data.swaplevel().dropna(), period
 
-    def _drop_less_than_periods(self, data:pd.DataFrame, periods='M'):
-        if periods is 'M' :    min_obs = 120
-        elif periods is 'W' :   min_obs = 120 * 52
+    def _drop_less_than_periods(self, data:pd.DataFrame, period='M'):
+        if period is 'M' :    min_obs = 120
+        elif period is 'W' :   min_obs = 120 * 52
         idx = pd.IndexSlice
         nobs = data.stack().groupby(level='ticker').size()
         keep = nobs[nobs>min_obs].index
