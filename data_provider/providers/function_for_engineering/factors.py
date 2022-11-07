@@ -179,7 +179,7 @@ class LaggedReturns(Factors):
     
     def _calculate_factors(self)->pd.DataFrame:
         for t in range(1, 7):
-            self._dfRtn[f'return_1{self._period}_t-{t}'] =  self._dfRtn.groupby(level='ticker').return_1m.shift(t)
+            self._dfRtn[f'return_1{self._period}_t-{t}'] =  self._dfRtn.groupby(level='ticker').loc[:,f"return_1{self._period}"].shift(t)
         return self._dfRtn
         
 # ===============================================
