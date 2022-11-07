@@ -10,7 +10,7 @@ class Returns:
         self._period = period
         
     def get_data(self):
-        if self._data is None: self._data = self._drop_less_than_periods(self._calculate_rtn(self._dfPrices, self._period))
+        if self._data is None: self._data = self._drop_less_than_periods(self._calculate_rtn(self._dfPrices, self._period), self._period)
         return self._data
     
     def _calculate_rtn(self, dfPrices:pd.DataFrame,  period:str) -> pd.DataFrame:
@@ -21,7 +21,7 @@ class Returns:
         dfPrices = dfPrices.resample(period).last() 
         dfPrices.columns.name='ticker'
         for lag in lags:
-            data[f'return_{lag}m'] = (dfPrices
+            data[f'return_{lag}{period}'] = (dfPrices
                                     .pct_change(lag)
                                     .stack()
                                     .pipe(lambda x: x.clip(lower=x.quantile(outlier_cutoff),
@@ -30,11 +30,11 @@ class Returns:
                                     .pow(1/lag)
                                     .sub(1)
                                     )
-        return data.swaplevel().dropna(), period
+        return data.swaplevel().dropna()
 
-    def _drop_less_than_periods(self, data:pd.DataFrame, period='M'):
-        if period is 'M' :    min_obs = 120
-        elif period is 'W' :   min_obs = 120 * 52
+    def _drop_less_than_periods(self, data:pd.DataFrame, period:str='M'):
+        if period is 'm' :    min_obs = 120
+        elif period is 'w' :   min_obs = 120 * 52
         idx = pd.IndexSlice
         nobs = data.stack().groupby(level='ticker').size()
         keep = nobs[nobs>min_obs].index
