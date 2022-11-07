@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict
 from dataclasses  import dataclass
 import pandas as pd
 import datetime as dt
@@ -13,7 +13,7 @@ class Context:
         volumes: pd.DataFrame = None
         profiles:pd.DataFrame = None
         factors:pd.DataFrame = None
-        data_engineered :pd.DataFrame = None
+        data_engineered :Dict[str,pd.DataFrame] = None
         updated_date:pd.Timestamp = None
         
 
@@ -93,7 +93,8 @@ class Data:
         # context.profiles = pd.DataFrame([profile for profile in gen_profiles]).set_index('ticker') #삭제
         
         # 데이터 엔지니어링 작업
-        context.data_engineered = DataEngineer(context.prices, context.factors, context.profiles).get_data() 
+        context.data_engineered['w'] = DataEngineer(context.prices, context.factors, context.profiles, period='w').get_data() 
+        context.data_engineered['m'] = DataEngineer(context.prices, context.factors, context.profiles, period='m').get_data() 
         
         # 업데이트 일자 기록     
         context.updated_date:pd.Timestamp = dt.datetime.today().strftime('%Y-%m-%d')
