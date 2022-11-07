@@ -92,7 +92,7 @@ class MarketFactors(Factors):
             pd.DataFrame: market beta (시장 민감도)
         """
         if period is 'm' :   T = 24
-        elif 'w' :   T = 5      # 24 * 52
+        elif 'w' :   T =  24 * 52
         dfBetas = (dfRtnFactorSubRf.groupby(level='ticker',
                                     group_keys=False)
                 .apply(lambda x: RollingOLS(endog=x.loc[:,f"return_1{period}"],
