@@ -29,7 +29,7 @@ class DataEngineer:
         
     def engineering_data(self, dfPrices:pd.DataFrame, dfprofiles:pd.DataFrame, dfFactors:pd.DataFrame, period:str):
         dfRtn = Returns(dfPrices, period).get_data()
-        dfRtn = MarketFactors(dfRtn, dfFactors).get_data()
+        dfRtn = MarketFactors(dfRtn, dfFactors, period).get_data()
         dfRtn = MomentumFactors(dfRtn, period).get_data()
         dfRtn = DateIndicators(dfRtn, period).get_data()
         dfRtn = LaggedReturns(dfRtn, period).get_data()
