@@ -206,13 +206,15 @@ class DynamicSizeFactors(Factors):
         
         
     def _calculate_factors(self)->pd.DataFrame:
-        msize = self._calculate_msize(self._dfPrices, self._dfRtn, self._dfProfiles)
-        self._dfRtn['msize'] = (msize.apply(lambda x: pd.qcut(x, q=10, labels=list(range(1, 11)))
-                            .astype(int), axis=1)
-                    .stack()
-                    .swaplevel())
-        self._dfRtn['msize']  = self._dfRtn['msize'].fillna(-1)
-        return self._dfRtn
+        try:
+            msize = self._calculate_msize(self._dfPrices, self._dfRtn, self._dfProfiles)
+            self._dfRtn['msize'] = (msize.apply(lambda x: pd.qcut(x, q=10, labels=list(range(1, 11)))
+                                .astype(int), axis=1)
+                        .stack()
+                        .swaplevel())
+            self._dfRtn['msize']  = self._dfRtn['msize'].fillna(-1)
+            return self._dfRtn
+        except: return self._dfRtn
 
 
     def _calculate_msize(self, dfPrices:pd.DataFrame, dfRtn:pd.DataFrame, dfProfiles:pd.DataFrame) -> pd.DataFrame:
@@ -241,12 +243,14 @@ class SectorFactors(Factors):
         self._profile= profile
         
     def _calculate_factors(self) -> pd.DataFrame:
-        sector = pd.DataFrame(self._profile['sector'])
-        sector.index.name='ticker'
-        self._dfRtn= self._dfRtn.join(sector)
-        self._dfRtn.sector = self._dfRtn.sector.fillna('Unknown')
-        return self._dfRtn
-    
+        try:
+            sector = pd.DataFrame(self._profile['sector'])
+            sector.index.name='ticker'
+            self._dfRtn= self._dfRtn.join(sector)
+            self._dfRtn.sector = self._dfRtn.sector.fillna('Unknown')
+            return self._dfRtn
+        except: return self._dfRtn
+        
 
 # ===============================================
 # create_dummy_data
@@ -257,9 +261,11 @@ class DummyVariables(Factors):
         super().__init__(dfRtn)
    
     def _calculate_factors(self) -> pd.DataFrame:
-        self._dfRtn = pd.get_dummies(self._dfRtn,
-                                    columns=['year','month', 'msize', 'sector'],
-                                    prefix=['year','month', 'msize',''],
-                                    prefix_sep=['_', '_', '_', ''])
-        self._dfRtn = self._dfRtn.rename(columns={c:c.replace('.0', '') for c in self._dfRtn.columns})
-        return self._dfRtn
+        try:
+            self._dfRtn = pd.get_dummies(self._dfRtn,
+                                        columns=['year','month', 'msize', 'sector'],
+                                        prefix=['year','month', 'msize',''],
+                                        prefix_sep=['_', '_', '_', ''])
+            self._dfRtn = self._dfRtn.rename(columns={c:c.replace('.0', '') for c in self._dfRtn.columns})
+            return self._dfRtn
+        except: return self._dfRtn
