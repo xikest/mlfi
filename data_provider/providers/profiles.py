@@ -31,7 +31,6 @@ class Profiles:
         pass
 
     @staticmethod 
-    
     def load_profiles(market:str='snp500') -> Iterator[Profile]:
         """ 입력된 시장에 맞는 정보를 제공한다.
 
@@ -43,18 +42,23 @@ class Profiles:
         """
 
         if market == 'snp500':
+            print('snp500')
             yield from Profiles()._load_profile_snp500(data_src = 'yahoo')
             
         elif 'kospi':
+            print('kospi')
             yield from Profiles()._load_profile_stocks_from_fdr('KOSPI', data_src = 'naver')
             
         elif 'nasdaq':
-            yield from Profiles()._load_profile_stocks_from_fdr('NADAQ', data_src = 'yahoo')
+            print('nasdaq')
+            yield from Profiles()._load_profile_stocks_from_fdr('NASDAQ', data_src = 'yahoo')
 
         elif 'etf_us':
+            print('etf_us')
             url = 'https://kr.investing.com/etfs/usa-etfs' # 인베스팅 닷컴 ETF 미국 ETF 리스트
             yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'yahoo')
         elif 'etf_kr':
+            print('etf_kr')
             url = 'https://kr.investing.com/etfs/south-korea-etfs' # 인베스팅 닷컴 ETF 한국 ETF 리스트
             yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'naver')
         
@@ -63,7 +67,7 @@ class Profiles:
         url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
         df = pd.read_html(url, header=0)[0]
         df.loc[:,'Symbol'] = df.loc[:, 'Symbol'].map(lambda x:x.replace('.' , '-'))
-        df = df.iloc[:3,:]
+        # df = df.iloc[:3,:]
         for _, info in df.iterrows():
             yield Profile(ticker=info['Symbol'],
                                     name=info['Security'],
@@ -78,7 +82,7 @@ class Profiles:
             )
 
 
-    def _load_profile_ETF_from_investing(self, url, data_src:str)-> Iterator[Profile]:
+    def _load_profile_ETF_from_investing(self, url:str, data_src:str)-> Iterator[Profile]:
         hdr ={'User-Agent': 'Mozilla/5.0'}
         req = Request(url,headers=hdr)
         page = urlopen(req)
