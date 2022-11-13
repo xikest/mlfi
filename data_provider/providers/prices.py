@@ -4,7 +4,6 @@ import pandas_datareader.data as web
 # from pandas_datareader import wb
 import FinanceDataReader as fdr  # pip install -U finance-datareader
 from tqdm import tqdm
-from dataclasses import dataclass
 # import asyncio
 
 
@@ -22,7 +21,7 @@ class Prices:
     #                     print(f'{symbol},prices: {e}')
     #                     pass
     @staticmethod
-    def load_from_web(symbols:List[str]=['AAPL'], data_src='yahoo', start_date='2000-1-1', end_date='2022-12-31') -> pd.DataFrame:
+    def load_from_web(tickers:List[str]=['AAPL'], data_src='yahoo', start_date='2000-1-1', end_date='2022-12-31') -> pd.DataFrame:
         """
         pandaDatareader에서 데이터를 받아온다.
         
@@ -45,13 +44,13 @@ class Prices:
         """
         
         
-        for symbol in tqdm(symbols): 
+        for ticker in tqdm(tickers): 
             try:
-                df = web.DataReader(symbol,data_src, start=start_date, end=end_date)
-                df['ticker']=symbol
+                df = web.DataReader(ticker,data_src, start=start_date, end=end_date)
+                df['ticker']=ticker
                 yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
             except Exception as e:
-                print(f'{symbol},prices: {e}')
+                print(f'{ticker},prices: {e}')
                 pass
         # elif 'famafrench': 
         #     yield {symbol : web.DataReader(symbol, source, start=start_date, end=end_date)[0] for symbol in symbols}
@@ -70,7 +69,7 @@ class Prices:
                         
 
     @staticmethod
-    def load_from_fdr(symbols:List[str]=['AAPL'], start_date='2000-1-1', end_date='2022-12-31') -> pd.DataFrame:
+    def load_from_fdr(tickers:List[str]=['AAPL'], start_date='2000-1-1', end_date='2022-12-31') -> pd.DataFrame:
         """
         FinacialDatareader에서 데이터를 받아온다.
         Args:
@@ -81,21 +80,21 @@ class Prices:
         Yields:
                     pd.DataFrame: 요청된 symbols의 adj close 데이터를 반환한다. 
         """
-        for symbol in tqdm(symbols): 
+        for ticker in tqdm(tickers): 
             try:
-                df = fdr.DataReader(symbol, start=start_date, end=end_date)
-                df['ticker']=symbol
+                df = fdr.DataReader(ticker, start=start_date, end=end_date)
+                df['ticker']=ticker
                 yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
             except Exception as e:
-                print(f'{symbol},prices: {e}')
+                print(f'{ticker},prices: {e}')
                 pass
             
 class FamaFrench:
         @staticmethod
-        def load_from_web(symbols:List[str]=['F-F_Research_Data_5_Factors_2x3'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
-            for symbol in tqdm(symbols): 
+        def load_from_web(tickers:List[str]=['F-F_Research_Data_5_Factors_2x3'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
+            for ticker in tqdm(tickers): 
                     try:
-                        df = web.DataReader(symbol, 'famafrench', start=start_date, end=end_date)
+                        df = web.DataReader(ticker, 'famafrench', start=start_date, end=end_date)
                         yield df[0]
                     except Exception as e:
                         print(f'F-F_Research_Data: {e}')
