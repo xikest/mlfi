@@ -1,6 +1,6 @@
 
 import pandas as pd
-import seaborn as sns
+# import seaborn as sns
 
 class Returns:
     
@@ -40,14 +40,14 @@ class Returns:
         keep = nobs[nobs>min_obs].index
         return data.loc[idx[keep,:], :]
 
-    def plot_correlaton(self) -> pd.DataFrame:
-        """
-        데이터의 correlation을 계산하여 clustermap 그래프를 보여준다.
+    # def plot_correlaton(self) -> pd.DataFrame:
+    #     """
+    #     데이터의 correlation을 계산하여 clustermap 그래프를 보여준다.
 
-        Args:
-            df_rtn (pd.DataFrame): 수익률 데이터 
+    #     Args:
+    #         df_rtn (pd.DataFrame): 수익률 데이터 
 
-        Returns: None
-        """
-        sns.clustermap(self.get_data.corr('spearman'), annot=True, center=0, cmap='Blues');
-        return None
+    #     Returns: None
+    #     """
+    #     sns.clustermap(self.get_data.corr('spearman'), annot=True, center=0, cmap='Blues');
+    #     return None
