@@ -22,7 +22,7 @@ class Prices:
     #                     print(f'{symbol},prices: {e}')
     #                     pass
     @staticmethod
-    def load_from_web(symbols:List[str]=['AAPL'], start_date='2000-1-1', end_date='2022-12-31') -> pd.DataFrame:
+    def load_from_web(symbols:List[str]=['AAPL'], data_src='yahoo', start_date='2000-1-1', end_date='2022-12-31') -> pd.DataFrame:
         """
         pandaDatareader에서 데이터를 받아온다.
         
@@ -47,7 +47,7 @@ class Prices:
         
         for symbol in tqdm(symbols): 
             try:
-                df = web.DataReader(symbol, 'yahoo', start=start_date, end=end_date)
+                df = web.DataReader(symbol,data_src, start=start_date, end=end_date)
                 df['ticker']=symbol
                 yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
             except Exception as e:

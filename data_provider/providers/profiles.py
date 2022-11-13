@@ -3,6 +3,7 @@ from dataclasses import dataclass
 import pandas as pd
 import yfinance as yf
 import FinanceDataReader as fdr
+import pandas_datareader.data as web
 # import asyncio
 
 from bs4 import BeautifulSoup
@@ -21,6 +22,7 @@ class Profile:
     cik:Optional[str] = None
     founded:Optional[str] = None
     enterpriseValue:Union[int, float]=None
+    data_src:Optional[str] = None
         
 
 class Profiles:
@@ -41,23 +43,23 @@ class Profiles:
         """
 
         if market == 'snp500':
-            yield from Profiles()._load_profile_snp500()
+            yield from Profiles()._load_profile_snp500(data_src = 'yahoo')
             
         elif 'kospi':
-            yield from Profiles()._load_profile_stocks_from_fdr('KOSPI')
+            yield from Profiles()._load_profile_stocks_from_fdr('KOSPI', data_src = 'naver')
             
         elif 'nasdaq':
-            yield from Profiles()._load_profile_stocks_from_fdr('NADAQ')
+            yield from Profiles()._load_profile_stocks_from_fdr('NADAQ', data_src = 'yahoo')
 
         elif 'etf_us':
             url = 'https://kr.investing.com/etfs/usa-etfs' # 인베스팅 닷컴 ETF 미국 ETF 리스트
-            yield from Profiles()._load_profile_ETF_from_investing(url)
+            yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'yahoo')
         elif 'etf_kr':
             url = 'https://kr.investing.com/etfs/south-korea-etfs' # 인베스팅 닷컴 ETF 한국 ETF 리스트
-            yield from Profiles()._load_profile_ETF_from_investing(url)
+            yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'naver')
         
 
-    def _load_profile_snp500(self) -> Iterator[Profile]:
+    def _load_profile_snp500(self, data_src:str) -> Iterator[Profile]:
         url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
         df = pd.read_html(url, header=0)[0]
         df.loc[:,'Symbol'] = df.loc[:, 'Symbol'].map(lambda x:x.replace('.' , '-'))
@@ -71,32 +73,40 @@ class Profiles:
                                     cik=info['CIK'],
                                     founded=info['Founded'],
                                     sector=yf.Ticker(info['Symbol']).info.get('sector'),
-                                    enterpriseValue = yf.Ticker(info['Symbol']).info.get('enterpriseValue')
+                                    enterpriseValue = yf.Ticker(info['Symbol']).info.get('enterpriseValue'),
+                                    data_src = data_src
             )
 
 
-    def _load_profile_ETF_from_investing(self, url)-> Iterator[Profile]:
-        req = Request(url,headers={'User-Agent': 'Mozilla/5.0'})
+    def _load_profile_ETF_from_investing(self, url, data_src:str)-> Iterator[Profile]:
+        hdr ={'User-Agent': 'Mozilla/5.0'}
+        req = Request(url,headers=hdr)
         page = urlopen(req)
         pages_etf = BeautifulSoup(page).select_one('#etf_issuer > select')
         issuers ={page['value']:page.string for page in pages_etf.select('option')}
 
         for issuer in tqdm(issuers.keys()):
-            req = Request(f'{site}?&issuer_filter={issuer}',headers=hdr) 
+            req = Request(f'{url}?&issuer_filter={issuer}',headers=hdr) 
             page = urlopen(req)
             soup = BeautifulSoup(page)
             pages_ETF = soup.select_one('#etfs > tbody')
             
             for page_ETF in pages_ETF:
-                yield Profile(ticker=page_ETF.find("td", {'class':'left symbol'})['title'],
-                                name=page_ETF.find("span", {'class':'alertBellGrayPlus js-plus-icon genToolTip oneliner'})['data-name'])
+                yield Profile(  ticker=page_ETF.find("td", {'class':'left symbol'})['title'],
+                                name=page_ETF.find("span", {'class':'alertBellGrayPlus js-plus-icon genToolTip oneliner'})['data-name'],
+                                data_src = data_src)
                 
-    def _load_profile_stocks_from_fdr(self, market) -> Iterator[Profile]:
-        info = fdr.StockListing('KOSPI')
+    def _load_profile_stocks_from_fdr(self, market:str = 'S&P500', data_src:str='yahoo') -> Iterator[Profile]:
+        """
+        market = S&P500 , NASDAQ, KOSPI, KOSDAQ
+        """
+
+        info = fdr.StockListing(market)
         for _, info in info.iterrows():
-                yield Profile(ticker=info['Code'],
+                yield Profile(  ticker=info['Code'],
                                 name=info['Name'],
-                                enterpriseValue =info['Marcap']
+                                enterpriseValue =info['Marcap'],
+                                data_src = data_src
                                 )
 
         # yield from [Info(ticker=info['Symbol'],
