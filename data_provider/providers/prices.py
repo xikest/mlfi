@@ -44,7 +44,7 @@ class Prices:
         """
         
         
-        for ticker in tqdm(tickers): 
+        for ticker, data_srt in tqdm(zip(tickers, data_srt)): 
             try:
                 df = web.DataReader(ticker,data_src, start=start_date, end=end_date)
                 df['ticker']=ticker
