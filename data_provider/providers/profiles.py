@@ -82,13 +82,13 @@ class Profiles:
         hdr ={'User-Agent': 'Mozilla/5.0'}
         req = Request(url,headers=hdr)
         page = urlopen(req)
-        pages_etf = BeautifulSoup(page).select_one('#etf_issuer > select')
+        pages_etf = BeautifulSoup(page,'html.parser').select_one('#etf_issuer > select')
         issuers ={page['value']:page.string for page in pages_etf.select('option')}
 
         for issuer in tqdm(issuers.keys()):
             req = Request(f'{url}?&issuer_filter={issuer}',headers=hdr) 
             page = urlopen(req)
-            soup = BeautifulSoup(page)
+            soup = BeautifulSoup(page,'html.parser')
             pages_ETF = soup.select_one('#etfs > tbody')
             
             for page_ETF in pages_ETF:
