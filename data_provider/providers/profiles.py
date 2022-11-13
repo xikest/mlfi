@@ -104,8 +104,6 @@ class Profiles:
         for _, info in info.iterrows():
             yield Profile(  ticker=info['Symbol'],
                             name=info['Name'],
-                            sector = info['IndustryCode'], #571060 섹터 코드를 변환해야 함 (향후 구현)
-                            enterpriseValue = None,
                                 data_src = data_src
                                 )
 
