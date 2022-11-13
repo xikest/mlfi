@@ -45,19 +45,19 @@ class Profiles:
             print('snp500')
             yield from Profiles()._load_profile_snp500(data_src = 'yahoo')
             
-        elif 'kospi':
+        elif market == 'kospi':
             print('kospi')
             yield from Profiles()._load_profile_stocks_from_fdr('KOSPI', data_src = 'naver')
             
-        elif 'nasdaq':
+        elif market == 'nasdaq':
             print('nasdaq')
             yield from Profiles()._load_profile_stocks_from_fdr('NASDAQ', data_src = 'yahoo')
 
-        elif 'etf_us':
+        elif market == 'etf_us':
             print('etf_us')
             url = 'https://kr.investing.com/etfs/usa-etfs' # 인베스팅 닷컴 ETF 미국 ETF 리스트
             yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'yahoo')
-        elif 'etf_kr':
+        elif market == 'etf_kr':
             print('etf_kr')
             url = 'https://kr.investing.com/etfs/south-korea-etfs' # 인베스팅 닷컴 ETF 한국 ETF 리스트
             yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'naver')
