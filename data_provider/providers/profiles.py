@@ -42,19 +42,15 @@ class Profiles:
         """
 
         if market == 'snp500':
-            print('snp500')
             yield from Profiles()._load_profile_snp500(data_src = 'yahoo')
             
         elif market == 'kospi':
-            print('kospi')
             yield from Profiles()._load_profile_stocks_from_fdr('KOSPI', data_src = 'naver')
             
         elif market == 'nasdaq':
-            print('nasdaq')
             yield from Profiles()._load_profile_stocks_from_fdr('NASDAQ', data_src = 'yahoo')
 
         elif market == 'etf_us':
-            print('etf_us')
             url = 'https://kr.investing.com/etfs/usa-etfs' # 인베스팅 닷컴 ETF 미국 ETF 리스트
             yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'yahoo')
         elif market == 'etf_kr':
@@ -104,8 +100,7 @@ class Profiles:
         """
         market = S&P500 , NASDAQ, KOSPI, KOSDAQ
         """
-
-        info = fdr.StockListing(market)
+        info = fdr.StockListing(market).rename(columns={'Code':'Symbol'})
         for _, info in info.iterrows():
             yield Profile(  ticker=info['Symbol'],
                             name=info['Name'],
