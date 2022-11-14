@@ -74,7 +74,8 @@ class Profiles:
                                     founded=info['Founded'],
                                     sector=yf.Ticker(info['Symbol']).info.get('sector'),
                                     enterpriseValue = yf.Ticker(info['Symbol']).info.get('enterpriseValue'),
-                                    data_src = data_src
+                                    data_src = data_src,
+                                    
             )
 
 

@@ -21,7 +21,7 @@ class Prices:
     #                     print(f'{symbol},prices: {e}')
     #                     pass
     @staticmethod
-    def load_from_web(tickers:List[str]=['AAPL'], data_src='yahoo', start_date='2000-1-1', end_date='2022-12-31') -> pd.DataFrame:
+    def load_from_web(tickers:List[str]=['AAPL'], data_src='yahoo', start='2000-1-1', end='2022-12-31') -> pd.DataFrame:
         """
         pandaDatareader에서 데이터를 받아온다.
         
@@ -46,11 +46,12 @@ class Prices:
         
         for ticker, data_src in tqdm(zip(tickers, data_src)): 
             try:
-                df = web.DataReader(ticker,data_src, start=start_date, end=end_date)
+                df = web.DataReader(ticker,data_src, start=start, end=end)
                 df['ticker']=ticker
                 yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
             except Exception as e:
-                print(f'{ticker},prices: {e}')
+                # print(f'{ticker},prices: {e}')
+                Prices.load_from_fdr(ticker,start=start, end=end)
                 pass
         # elif 'famafrench': 
         #     yield {symbol : web.DataReader(symbol, source, start=start_date, end=end_date)[0] for symbol in symbols}
@@ -69,7 +70,7 @@ class Prices:
                         
 
     @staticmethod
-    def load_from_fdr(tickers:List[str]=['AAPL'], start_date='2000-1-1', end_date='2022-12-31') -> pd.DataFrame:
+    def load_from_fdr(tickers:List[str]=['AAPL'], start='2000-1-1', end='2022-12-31') -> pd.DataFrame:
         """
         FinacialDatareader에서 데이터를 받아온다.
         Args:
@@ -82,7 +83,7 @@ class Prices:
         """
         for ticker in tqdm(tickers): 
             try:
-                df = fdr.DataReader(ticker, start=start_date, end=end_date)
+                df = fdr.DataReader(ticker, start=start, end=end)
                 df['ticker']=ticker
                 yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
             except Exception as e:
