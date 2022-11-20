@@ -102,7 +102,7 @@ class Data:
         
         #factor 데이터 저장
        
-        gen_ff_factors = FamaFrench.load_from_web([context.profiles.loc[0,'market_factors']])
+        gen_ff_factors = FamaFrench.load_from_web([context.profiles.loc[:,'market_factors'][0]])
         context.factors = pd.concat([factor for factor in gen_ff_factors])
         # 중간 데이터 저장 (팩터 데이터)
         self._save_data(context)

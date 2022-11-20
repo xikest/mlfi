@@ -29,13 +29,13 @@ class DataEngineer:
         
     def engineering_data(self, dfPrices:pd.DataFrame, dfprofiles:pd.DataFrame=None, dfFactors:pd.DataFrame=None, period:str='m'):
         dfRtn = Returns(dfPrices, period).get_data()
-        if dfprofiles.loc[0,'market_factors'] is not None:  
+        if dfprofiles.loc[:,'market_factors'][0] is not None:  
             dfRtn = MarketFactors(dfRtn, dfFactors, period).get_data()  #계산을 위해 마켓 팩커 값이 필요함
         dfRtn = MomentumFactors(dfRtn, period).get_data()
         dfRtn = DateIndicators(dfRtn).get_data()
         dfRtn = LaggedReturns(dfRtn, period).get_data()
         dfRtn = HoldingPeriodReturns(dfRtn, period).get_data()
-        if  dfprofiles.loc[0,'enable_profile_engineering'] == True :  # 프로파일의 시총 등의 값이 필요 함, df의 값은 모두 같은 값으로 하나만 확인하면 됨
+        if  dfprofiles.loc[:,'enable_profile_engineering'][0] == True :  # 프로파일의 시총 등의 값이 필요 함, df의 값은 모두 같은 값으로 하나만 확인하면 됨
             dfRtn = DynamicSizeFactors(dfRtn,dfPrices, dfprofiles).get_data()  
             dfRtn = SectorFactors(dfRtn, dfprofiles).get_data()  
         dfRtn = DummyVariables(dfRtn).get_data() 
