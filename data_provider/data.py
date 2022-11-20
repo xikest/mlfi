@@ -81,7 +81,7 @@ class Data:
         gen_profiles = Profiles.load_profiles(context.market)  # 프로파일을 위한 제너레이터
         context.profiles = pd.DataFrame([profile for profile in gen_profiles]).set_index('ticker')
         
-
+        # 중간 데이터 저장 (프로파일)
         self._save_data(context)
         
         # 가격 데이터 저장
