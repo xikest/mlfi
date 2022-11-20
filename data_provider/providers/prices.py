@@ -50,7 +50,7 @@ class Prices:
                 df['ticker']=ticker
                 yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
             except Exception as e:
-                # print(f'{ticker},prices: {e}')
+                print(f' error_web_{ticker},prices: {e}, try to fdr')
                 Prices.load_from_fdr(ticker,start=start, end=end)
                 pass
         # elif 'famafrench': 
@@ -87,7 +87,7 @@ class Prices:
                 df['ticker']=ticker
                 yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
             except Exception as e:
-                print(f'{ticker},prices: {e}')
+                print(f'error_fdr_{ticker},prices: {e}')
                 pass
             
 class FamaFrench:

@@ -63,12 +63,15 @@ class Data:
         
     def _load_data(self, context:Context): #불러오기
         try:
+            print(f'{context.market} loaded')
             return FunctionPath.Pickle.load_from_pickle(f'{context.market}')
         except:
             return context
     
     def _save_data(self, context:Context): # 저장
+        context.updated_date:pd.Timestamp = dt.datetime.today().strftime('%Y-%m-%d')
         FunctionPath.Pickle.save_to_pickle(context, f'{context.market}')
+        print(f'{context.market} saved')
         return print("saved")
     
     def _prepare_data(self, context:Context):
@@ -78,21 +81,27 @@ class Data:
         gen_profiles = Profiles.load_profiles(context.market)  # 프로파일을 위한 제너레이터
         context.profiles = pd.DataFrame([profile for profile in gen_profiles]).set_index('ticker')
         
+
+        self._save_data(context)
+        
         # 가격 데이터 저장
         tickers = context.profiles.reset_index().loc[:,'ticker'] #정보 객체에서 ticket만 추출하여 반환
         data_src = context.profiles.reset_index().loc[:,'data_src'] 
         
-        gen_prices = Prices.load_from_fdr(tickers, data_src= data_src,  start_date='2000-1-1', end_date='2022-12-31')  #가격 반환을 위한 제너레이터
-        # gen_prices = Prices.load_from_web(tickers, data_src= data_src,  start_date='2000-1-1', end_date='2022-12-31')  #가격 반환을 위한 제너레이터
+        gen_prices = Prices.load_from_web(tickers, data_src= data_src,  start='2000-1-1', end='2022-12-31')  #가격 반환을 위한 제너레이터
         prices_volumes = pd.concat([price for price in gen_prices]).loc[:,['Adj Close', 'Volume']].unstack('ticker')
         context.prices = prices_volumes.loc[:,'Adj Close']  # 가격 
         context.volumes = prices_volumes.loc[:,'Volume']  #거래량
         # pd.concat([price for price in gen_prices]).loc[:,'Adj Close'].unstack('ticker')  #삭제
         
+        # 중간 데이터 저장 (가격데이터)
+        self._save_data(context)
+        
         #factor 데이터 저장
         gen_ff_factors = FamaFrench.load_from_web(['F-F_Research_Data_5_Factors_2x3'])
         context.factors = pd.concat([factor for factor in gen_ff_factors])
-        
+        # 중간 데이터 저장 (팩터 데이터)
+        self._save_data(context)
         # context.profiles = pd.DataFrame([profile for profile in gen_profiles]).set_index('ticker') #삭제
         
         # 데이터 엔지니어링 작업
@@ -100,7 +109,6 @@ class Data:
         context.data_engineered ={period: DataEngineer(context.prices, context.factors, context.profiles, period=period).get_data() for period in ['w', 'm']}
         
         # 업데이트 일자 기록     
-        context.updated_date:pd.Timestamp = dt.datetime.today().strftime('%Y-%m-%d')
         self._save_data(context)
         return context
     
