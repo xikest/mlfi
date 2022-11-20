@@ -1,6 +1,6 @@
 from data_provider.data import Data
 from data_provider.functions_for_data.functions_path import FunctionPath
-
+import pandas as pd
     
     
 from data_provider import Data

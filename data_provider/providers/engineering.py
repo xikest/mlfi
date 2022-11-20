@@ -27,14 +27,17 @@ class DataEngineer:
         return self._data
         
         
-    def engineering_data(self, dfPrices:pd.DataFrame, dfprofiles:pd.DataFrame, dfFactors:pd.DataFrame, period:str):
+    def engineering_data(self, dfPrices:pd.DataFrame, dfprofiles:pd.DataFrame=None, dfFactors:pd.DataFrame=None, period:str='m'):
         dfRtn = Returns(dfPrices, period).get_data()
-        dfRtn = MarketFactors(dfRtn, dfFactors, period).get_data()
+        if dfprofiles.loc[0,'market_factors'] is not None:  
+            dfRtn = MarketFactors(dfRtn, dfFactors, period).get_data()  #계산을 위해 마켓 팩커 값이 필요함
         dfRtn = MomentumFactors(dfRtn, period).get_data()
         dfRtn = DateIndicators(dfRtn).get_data()
         dfRtn = LaggedReturns(dfRtn, period).get_data()
         dfRtn = HoldingPeriodReturns(dfRtn, period).get_data()
-        dfRtn = DynamicSizeFactors(dfRtn,dfPrices, dfprofiles).get_data()  
-        dfRtn = SectorFactors(dfRtn, dfprofiles).get_data()  
+         if  dfprofiles.loc[0,'enable_engineering'] is True :  # 프로파일의 시총 등의 값이 필요 함, df의 값은 모두 같은 값으로 하나만 확인하면 됨
+            dfRtn = DynamicSizeFactors(dfRtn,dfPrices, dfprofiles).get_data()  
+            dfRtn = SectorFactors(dfRtn, dfprofiles).get_data()  
         dfRtn = DummyVariables(dfRtn).get_data() 
         return dfRtn 
+                                enable_engineering =False)

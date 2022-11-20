@@ -23,6 +23,8 @@ class Profile:
     founded:Optional[str] = None
     enterpriseValue:Union[int, float]=None
     data_src:Optional[str] = None
+    market_factors:Optional[str] = None
+    enable_engineering:bool = True
         
 
 class Profiles:
@@ -42,17 +44,18 @@ class Profiles:
         """
 
         if market == 'snp500':
-            yield from Profiles()._load_profile_snp500(data_src = 'yahoo')
+            yield from Profiles()._load_profile_snp500(data_src = 'yahoo', market_factors = 'F-F_Research_Data_5_Factors_2x3')
             
         elif market == 'kospi':
             yield from Profiles()._load_profile_stocks_from_fdr('KOSPI', data_src = 'naver')
             
         elif market == 'nasdaq':
-            yield from Profiles()._load_profile_stocks_from_fdr('NASDAQ', data_src = 'yahoo')
+            yield from Profiles()._load_profile_stocks_from_fdr('NASDAQ', data_src = 'yahoo', market_factors = 'F-F_Research_Data_5_Factors_2x3')
 
         elif market == 'etf_us':
             url = 'https://kr.investing.com/etfs/usa-etfs' # 인베스팅 닷컴 ETF 미국 ETF 리스트
-            yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'yahoo')
+            yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'yahoo', market_factors = 'F-F_Research_Data_5_Factors_2x3')
+            
         elif market == 'etf_kr':
             print('etf_kr')
             url = 'https://kr.investing.com/etfs/south-korea-etfs' # 인베스팅 닷컴 ETF 한국 ETF 리스트
@@ -75,11 +78,13 @@ class Profiles:
                                     sector=yf.Ticker(info['Symbol']).info.get('sector'),
                                     enterpriseValue = yf.Ticker(info['Symbol']).info.get('enterpriseValue'),
                                     data_src = data_src,
+                                    market_factors = market_factors
+                                    enable_engineering =True
                                     
             )
 
 
-    def _load_profile_ETF_from_investing(self, url:str, data_src:str)-> Iterator[Profile]:
+    def _load_profile_ETF_from_investing(self, url:str, data_src:str, market_factors=None)-> Iterator[Profile]:
         hdr ={'User-Agent': 'Mozilla/5.0'}
         req = Request(url,headers=hdr)
         page = urlopen(req)
@@ -95,7 +100,9 @@ class Profiles:
             for page_ETF in pages_ETF:
                 yield Profile(  ticker=page_ETF.find("td", {'class':'left symbol'})['title'],
                                 name=page_ETF.find("span", {'class':'alertBellGrayPlus js-plus-icon genToolTip oneliner'})['data-name'],
-                                data_src = data_src)
+                                data_src = data_src,
+                                market_factors=market_factors,
+                                enable_engineering =False)
                 
     def _load_profile_stocks_from_fdr(self, market:str = 'S&P500', data_src:str='yahoo') -> Iterator[Profile]:
         """
@@ -105,8 +112,9 @@ class Profiles:
         for _, info in info.iterrows():
             yield Profile(  ticker=info['Symbol'],
                             name=info['Name'],
-                                data_src = data_src
-                                )
+                            data_src = data_src,
+                            market_factors=market_factors,
+                            enable_engineering =False)
 
         # yield from [Info(ticker=info['Symbol'],
         #                     name=info['Security'],

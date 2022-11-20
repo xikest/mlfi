@@ -98,8 +98,9 @@ class Data:
         self._save_data(context)
         
         #factor 데이터 저장
-        gen_ff_factors = FamaFrench.load_from_web(['F-F_Research_Data_5_Factors_2x3'])
-        context.factors = pd.concat([factor for factor in gen_ff_factors])
+        if factors_enable is True:
+            gen_ff_factors = FamaFrench.load_from_web(['F-F_Research_Data_5_Factors_2x3'])
+            context.factors = pd.concat([factor for factor in gen_ff_factors])
         # 중간 데이터 저장 (팩터 데이터)
         self._save_data(context)
         # context.profiles = pd.DataFrame([profile for profile in gen_profiles]).set_index('ticker') #삭제
