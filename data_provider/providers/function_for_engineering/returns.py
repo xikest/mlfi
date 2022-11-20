@@ -33,8 +33,8 @@ class Returns:
         return data.swaplevel().dropna()
 
     def _drop_less_than_periods(self, data:pd.DataFrame, period:str='m'):
-        if period is 'm' :    min_obs = 120
-        elif period is 'w' :   min_obs = 120 * 52
+        if period == 'm' :    min_obs = 120
+        elif period == 'w' :   min_obs = 120 * 52
         idx = pd.IndexSlice
         nobs = data.stack().groupby(level='ticker').size()
         keep = nobs[nobs>min_obs].index

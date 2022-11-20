@@ -41,13 +41,15 @@ class Factors:
 # market factors 
 # ===============================================
 class MarketFactors(Factors):
-    def __init__(self, dfRtn:pd.DataFrame, dfFactor:"F-F_Research_Data_5_Factors_2x3", period:str='m'):
+    def __init__(self, dfRtn:pd.DataFrame, dfFactor , period:str='m'):
+        
         """
+        
         market Factor 데이터를 계산한다
 
         Args:
             dfRtn (pd.DataFrame): 수익률 데이터
-            dfFactor (F): 파머 프렌치 Factor 데이터
+            dfFactor (F): 파머 프렌치 Factor 데이터 # dfFactor:"F-F_Research_Data_5_Factors_2x3"
         """
         super().__init__(dfRtn, period)
         self._dfFactor = dfFactor
@@ -60,13 +62,13 @@ class MarketFactors(Factors):
         self._dfRtn = self._impute_missingFactorBetas(self._dfRtn)
         return self._dfRtn
         
-    def _calculate_rollingFactorBetas(self, dfRtn:pd.DataFrame, dfFactor:"F-F_Research_Data_5_Factors_2x3", period:str = 'm')->pd.DataFrame:
+    def _calculate_rollingFactorBetas(self, dfRtn:pd.DataFrame, dfFactor, period:str = 'm')->pd.DataFrame:
         """
         마켓 beta를 계산한다.
 
         Args:
             dfRtn (pd.DataFrame):수익률 데이터
-            dfFactor (F): market factor 데이터
+            dfFactor (F): market factor 데이터  # dfFactor:"F-F_Research_Data_5_Factors_2x3"
             periods (str, optional): 데이터의 샘플 기간. Defaults to 'M'.
 
         Returns:
@@ -91,7 +93,7 @@ class MarketFactors(Factors):
         Returns:
             pd.DataFrame: market beta (시장 민감도)
         """
-        if period is 'm' :   T = 24
+        if period == 'm' :   T = 24
         elif 'w' :   T =  24 * 52
         dfBetas = (dfRtnFactorSubRf.groupby(level='ticker',
                                     group_keys=False)
