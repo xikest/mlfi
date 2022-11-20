@@ -63,9 +63,12 @@ class Data:
         
     def _load_data(self, context:Context): #불러오기
         try:
+
+            data = FunctionPath.Pickle.load_from_pickle(f'{context.market}')
             print(f'{context.market} loaded')
-            return FunctionPath.Pickle.load_from_pickle(f'{context.market}')
+            return data
         except:
+            print(f'{context.market} load fail')
             return context
     
     def _save_data(self, context:Context): # 저장
@@ -99,7 +102,7 @@ class Data:
         
         #factor 데이터 저장
        
-        gen_ff_factors = FamaFrench.load_from_web([dfprofiles.loc[0,'market_factors']])
+        gen_ff_factors = FamaFrench.load_from_web([context.profiles.loc[0,'market_factors']])
         context.factors = pd.concat([factor for factor in gen_ff_factors])
         # 중간 데이터 저장 (팩터 데이터)
         self._save_data(context)
