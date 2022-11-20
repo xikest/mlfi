@@ -24,7 +24,7 @@ class Profile:
     enterpriseValue:Union[int, float]=None
     data_src:Optional[str] = None
     market_factors:Optional[str] = None
-    enable_engineering:bool = True
+    enable_profile_engineering:bool = True
         
 
 class Profiles:
@@ -62,11 +62,11 @@ class Profiles:
             yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'naver')
         
 
-    def _load_profile_snp500(self, data_src:str) -> Iterator[Profile]:
+    def _load_profile_snp500(self, data_src:str, market_factors:str = 'F-F_Research_Data_5_Factors_2x3') -> Iterator[Profile]:
         url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
         df = pd.read_html(url, header=0)[0]
         df.loc[:,'Symbol'] = df.loc[:, 'Symbol'].map(lambda x:x.replace('.' , '-'))
-        # df = df.iloc[:3,:]
+        df = df.iloc[:3,:]
         for _, info in df.iterrows():
             yield Profile(ticker=info['Symbol'],
                                     name=info['Security'],
@@ -78,13 +78,12 @@ class Profiles:
                                     sector=yf.Ticker(info['Symbol']).info.get('sector'),
                                     enterpriseValue = yf.Ticker(info['Symbol']).info.get('enterpriseValue'),
                                     data_src = data_src,
-                                    market_factors = market_factors
-                                    enable_engineering =True
-                                    
-            )
+                                    market_factors = market_factors,
+                                    enable_profile_engineering = True
+                         )
 
 
-    def _load_profile_ETF_from_investing(self, url:str, data_src:str, market_factors=None)-> Iterator[Profile]:
+    def _load_profile_ETF_from_investing(self, url:str, data_src:str, market_factors:Optional[str]=None)-> Iterator[Profile]:
         hdr ={'User-Agent': 'Mozilla/5.0'}
         req = Request(url,headers=hdr)
         page = urlopen(req)
@@ -102,9 +101,9 @@ class Profiles:
                                 name=page_ETF.find("span", {'class':'alertBellGrayPlus js-plus-icon genToolTip oneliner'})['data-name'],
                                 data_src = data_src,
                                 market_factors=market_factors,
-                                enable_engineering =False)
+                                enable_profile_engineering =False)
                 
-    def _load_profile_stocks_from_fdr(self, market:str = 'S&P500', data_src:str='yahoo') -> Iterator[Profile]:
+    def _load_profile_stocks_from_fdr(self, market:str = 'S&P500', data_src:str='yahoo', market_factors:Optional[str]=None) -> Iterator[Profile]:
         """
         market = S&P500 , NASDAQ, KOSPI, KOSDAQ
         """
@@ -114,7 +113,7 @@ class Profiles:
                             name=info['Name'],
                             data_src = data_src,
                             market_factors=market_factors,
-                            enable_engineering =False)
+                            enable_profile_engineering =False)
 
         # yield from [Info(ticker=info['Symbol'],
         #                     name=info['Security'],

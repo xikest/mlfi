@@ -35,9 +35,8 @@ class DataEngineer:
         dfRtn = DateIndicators(dfRtn).get_data()
         dfRtn = LaggedReturns(dfRtn, period).get_data()
         dfRtn = HoldingPeriodReturns(dfRtn, period).get_data()
-         if  dfprofiles.loc[0,'enable_engineering'] is True :  # 프로파일의 시총 등의 값이 필요 함, df의 값은 모두 같은 값으로 하나만 확인하면 됨
+        if  dfprofiles.loc[0,'enable_profile_engineering'] is True :  # 프로파일의 시총 등의 값이 필요 함, df의 값은 모두 같은 값으로 하나만 확인하면 됨
             dfRtn = DynamicSizeFactors(dfRtn,dfPrices, dfprofiles).get_data()  
             dfRtn = SectorFactors(dfRtn, dfprofiles).get_data()  
         dfRtn = DummyVariables(dfRtn).get_data() 
         return dfRtn 
-                                enable_engineering =False)
