@@ -11,8 +11,8 @@ from urllib.request import Request, urlopen
 from tqdm import tqdm
 
 
-@dataclass
-class Profile(unsafe_hash =True):
+@dataclass(unsafe_hash =True)
+class Profile:
     ticker:Optional[str] = None
     name:Optional[str] = None
     sector:Optional[str] = None
