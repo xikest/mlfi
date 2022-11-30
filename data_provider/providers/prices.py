@@ -45,14 +45,29 @@ class Prices:
         
         
         for ticker, data_src in tqdm(zip(tickers, data_src)): 
+            
             try:
-                df = web.DataReader(ticker,data_src, start=start, end=end)
-                df['ticker']=ticker
-                yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
-            except Exception as e:
-                print(f' error_web_{ticker},prices: {e}, try to fdr')
-                Prices.load_from_fdr(ticker,start=start, end=end)
-                pass
+                if data_src == 'fdr':
+                    df = fdr.DataReader(ticker, start=start, end=end)
+                    df['ticker']=ticker
+                    yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+                else:
+                    df = web.DataReader(ticker,data_src, start=start, end=end)
+                    df['ticker']=ticker
+                    yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+            except  Exception as e:
+                print(f' error_{ticker},prices: {e}')
+                
+                
+                
+            # try:
+            #     df = web.DataReader(ticker,data_src, start=start, end=end)
+            #     df['ticker']=ticker
+            #     yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+            # except Exception as e:
+            #     print(f' error_web_{ticker},prices: {e}, try to fdr')
+            #     Prices.load_from_fdr(ticker,start=start, end=end)
+            #     pass
         # elif 'famafrench': 
         #     yield {symbol : web.DataReader(symbol, source, start=start_date, end=end_date)[0] for symbol in symbols}
 
@@ -69,26 +84,26 @@ class Prices:
     #                     pass
                         
 
-    @staticmethod
-    def load_from_fdr(tickers:List[str]=['AAPL'], start='2000-1-1', end='2022-12-31') -> pd.DataFrame:
-        """
-        FinacialDatareader에서 데이터를 받아온다.
-        Args:
-                    symbol (str): 주식의 심볼
-                    source (str): 데이터의 소스: yahoo와 FF 데이터_
-                    start_date (_type_): 조회 시작일
-                    end_date (_type_): 조회 종료일
-        Yields:
-                    pd.DataFrame: 요청된 symbols의 adj close 데이터를 반환한다. 
-        """
-        for ticker in tqdm(tickers): 
-            try:
-                df = fdr.DataReader(ticker, start=start, end=end)
-                df['ticker']=ticker
-                yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
-            except Exception as e:
-                print(f'error_fdr_{ticker},prices: {e}')
-                pass
+    # @staticmethod
+    # def load_from_fdr(tickers:List[str]=['AAPL'], start='2000-1-1', end='2022-12-31') -> pd.DataFrame:
+    #     """
+    #     FinacialDatareader에서 데이터를 받아온다.
+    #     Args:
+    #                 symbol (str): 주식의 심볼
+    #                 source (str): 데이터의 소스: yahoo와 FF 데이터_
+    #                 start_date (_type_): 조회 시작일
+    #                 end_date (_type_): 조회 종료일
+    #     Yields:
+    #                 pd.DataFrame: 요청된 symbols의 adj close 데이터를 반환한다. 
+    #     """
+    #     for ticker in tqdm(tickers): 
+    #         try:
+    #             df = fdr.DataReader(ticker, start=start, end=end)
+    #             df['ticker']=ticker
+    #             yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+    #         except Exception as e:
+    #             print(f'error_fdr_{ticker},prices: {e}')
+    #             pass
             
 class FamaFrench:
         @staticmethod
