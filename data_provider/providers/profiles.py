@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 
 @dataclass
-class Profile:
+class Profile(unsafe_hash =True):
     ticker:Optional[str] = None
     name:Optional[str] = None
     sector:Optional[str] = None
