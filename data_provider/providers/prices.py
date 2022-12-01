@@ -48,7 +48,7 @@ class Prices:
             
             try:
                 if data_src == 'fdr':
-                    df = fdr.DataReader(ticker, start=start, end=end)
+                    df = fdr.DataReader(ticker, end=end)
                     df.loc[:,'ticker']=ticker
                     yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
                 else:
