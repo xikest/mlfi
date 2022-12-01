@@ -2,6 +2,7 @@ from typing import Optional, Dict
 from dataclasses  import dataclass
 import pandas as pd
 import datetime as dt
+import tqdm
 from .providers import Profiles, Prices, FamaFrench, DataEngineer
 from .functions_for_data import FunctionPath
 
@@ -94,7 +95,7 @@ class Data:
         gen_prices = Prices.load_from_web(tickers, data_src= data_src,  start='2000-1-1', end='2022-12-31')  #가격 반환을 위한 제너레이터
         
         
-        prices_volumes = pd.concat([price for price in gen_prices]).loc[:,['Adj Close', 'Volume']].unstack('ticker')
+        prices_volumes = pd.concat([price for price in tqdm(gen_prices)]).loc[:,['Adj Close', 'Volume']].unstack('ticker')
         context.prices = prices_volumes.loc[:,'Adj Close']  # 가격 
         context.volumes = prices_volumes.loc[:,'Volume']  #거래량
         # pd.concat([price for price in gen_prices]).loc[:,'Adj Close'].unstack('ticker')  #삭제

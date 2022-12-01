@@ -45,10 +45,12 @@ class Prices:
         
         
         for ticker, data_src in tqdm(zip(tickers, data_src)): 
+            print(f'{ticker} downlaod from {data_src}, period: {start} to {end}')
             
             try:
                 if data_src == 'fdr':
-                    df = fdr.DataReader(ticker, end=end)
+                    df = fdr.DataReader(ticker,  start=start, end=end)
+                    print(df.head(1))
                     df.loc[:,'ticker']=ticker
                     yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
                 else:

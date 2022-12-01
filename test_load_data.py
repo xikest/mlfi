@@ -5,9 +5,9 @@ import pandas as pd
     
 from data_provider import Data
 # snp500 = Data("snp500")
-nasdaq = Data("nasdaq")
+# nasdaq = Data("nasdaq")
 # kospi = Data("kospi")
-# etf_us = Data(market="etf_us")
+etf_us = Data(market="etf_us")
 # etf_kr = Data("etf_kr")
 
 print('finish')
