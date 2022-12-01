@@ -94,7 +94,8 @@ class Data:
         
         gen_prices = Prices.load_from_web(tickers, data_src= data_src,  start='2000-1-1', end='2022-12-31')  #가격 반환을 위한 제너레이터
         
-        
+        print('start prices')
+       
         prices_volumes = pd.concat([price for price in gen_prices]).loc[:,['Adj Close', 'Volume']].unstack('ticker')
         context.prices = prices_volumes.loc[:,'Adj Close']  # 가격 
         context.volumes = prices_volumes.loc[:,'Volume']  #거래량
@@ -104,6 +105,7 @@ class Data:
         self._save_data(context)
         
         #factor 데이터 저장
+        print('start factors')
        
         gen_ff_factors = FamaFrench.load_from_web([context.profiles.loc[:,'market_factors'][0]])
         context.factors = pd.concat([factor for factor in gen_ff_factors])
@@ -112,10 +114,11 @@ class Data:
         # context.profiles = pd.DataFrame([profile for profile in gen_profiles]).set_index('ticker') #삭제
         
         # 데이터 엔지니어링 작업
-        
+        print('start engineering')
         context.data_engineered ={period: DataEngineer(context.prices, context.factors, context.profiles, period=period).get_data() for period in ['w', 'm']}
         
         # 업데이트 일자 기록     
         self._save_data(context)
+        print('fin')
         return context
     
