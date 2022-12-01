@@ -11,4 +11,4 @@ etf_us = Data(market="etf_us")
 # etf_kr = Data("etf_kr")
 
 print('finish')
-FunctionPath.HDFS.save_to_HDFS(pd.DataFrame(['dummy']), 'df_dummy','df_dummy.h5')
+FunctionPath.HDFS.save_to_HDFS(pd.DataFrame(['dummy']), 'df_dummy','df_dummy')
