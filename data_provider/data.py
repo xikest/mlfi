@@ -2,7 +2,7 @@ from typing import Optional, Dict
 from dataclasses  import dataclass
 import pandas as pd
 import datetime as dt
-import tqdm
+# import tqdm
 from .providers import Profiles, Prices, FamaFrench, DataEngineer
 from .functions_for_data import FunctionPath
 
