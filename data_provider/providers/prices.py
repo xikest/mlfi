@@ -63,9 +63,9 @@ class Prices:
             except  Exception as e:
                 print(f' error_{ticker},prices: {e}')
                 
-            if cnt > 5 :
+            if Prices.cnt > 5 :
                 break
-            cnt += 1
+            Prices.cnt += 1
 
         
         
