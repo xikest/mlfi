@@ -47,7 +47,7 @@ class Prices:
 
         
         
-        for ticker, data_src in tqdm(zip(tickers, data_src)): 
+        for ticker, data_src in zip(tickers, data_src): 
             print(f'{ticker} downlaod from {data_src}, period: {start} to {end}')
             
             try:
