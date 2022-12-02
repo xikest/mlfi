@@ -96,11 +96,11 @@ class Profiles:
             pages_ETF = soup.select_one('#etfs > tbody')
             
             
-            yield from {Profile(ticker=page_ETF.find("td", {'class':'left symbol'})['title'],
+            yield from [Profile(ticker=page_ETF.find("td", {'class':'left symbol'})['title'],
                                 name=page_ETF.find("span", {'class':'alertBellGrayPlus js-plus-icon genToolTip oneliner'})['data-name'],
                                 data_src = data_src,
                                 market_factors=market_factors,
-                                enable_profile_engineering =False) for page_ETF in pages_ETF}[:5]
+                                enable_profile_engineering =False) for page_ETF in pages_ETF][:5]
             
                 
                 
