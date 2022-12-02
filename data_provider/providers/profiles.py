@@ -100,7 +100,7 @@ class Profiles:
                                 name=page_ETF.find("span", {'class':'alertBellGrayPlus js-plus-icon genToolTip oneliner'})['data-name'],
                                 data_src = data_src,
                                 market_factors=market_factors,
-                                enable_profile_engineering =False) for page_ETF in pages_ETF][:5]
+                                enable_profile_engineering =False) for page_ETF in pages_ETF]
             
                 
                 
