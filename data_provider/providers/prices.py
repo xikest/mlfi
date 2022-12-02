@@ -3,7 +3,6 @@ import pandas as pd
 import pandas_datareader.data as web 
 # from pandas_datareader import wb
 import FinanceDataReader as fdr  # pip install -U finance-datareader
-from tqdm import tqdm
 # import asyncio
 
 
