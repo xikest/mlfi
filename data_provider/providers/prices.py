@@ -42,6 +42,8 @@ class Prices:
         2020-01-06	AAPL	73.447502	74.989998	73.187500	74.949997	118387200.0	73.548637
         2020-01-07	AAPL	74.959999	75.224998	74.370003	74.597504	108872000.0	73.202744
         """
+
+
         
         
         for ticker, data_src in tqdm(zip(tickers, data_src)): 
@@ -59,6 +61,25 @@ class Prices:
                     yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
             except  Exception as e:
                 print(f' error_{ticker},prices: {e}')
+                
+
+        
+        
+        # for ticker, data_src in tqdm(zip(tickers, data_src)): 
+        #     print(f'{ticker} downlaod from {data_src}, period: {start} to {end}')
+            
+        #     try:
+        #         if data_src == 'fdr':
+        #             df = fdr.DataReader(ticker,  start=start, end=end)
+        #             print(df.head(1))
+        #             df.loc[:,'ticker']=ticker
+        #             yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+        #         else:
+        #             df = web.DataReader(ticker,data_src, start=start, end=end)
+        #             df.loc[:,'ticker']=ticker
+        #             yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+        #     except  Exception as e:
+        #         print(f' error_{ticker},prices: {e}')
                 
                 
                 
