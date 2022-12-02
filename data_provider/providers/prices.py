@@ -2,6 +2,7 @@ from typing import Generator, List, Union
 import pandas as pd
 import pandas_datareader.data as web 
 # from pandas_datareader import wb
+import tqdm
 import FinanceDataReader as fdr  # pip install -U finance-datareader
 # import asyncio
 

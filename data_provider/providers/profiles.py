@@ -79,7 +79,7 @@ class Profiles:
                             enterpriseValue = yf.Ticker(info['Symbol']).info.get('enterpriseValue'),
                             data_src = data_src,
                             market_factors = market_factors,
-                            enable_profile_engineering = True) for _, info in df.iterrows()}
+                            enable_profile_engineering = True) for _, info in tqdm(df.iterrows())}
 
 
     def _load_profile_ETF_from_investing(self, url:str, data_src:str, market_factors:Optional[str]=None)-> Iterator[Profile]:
@@ -89,7 +89,7 @@ class Profiles:
         pages_etf = BeautifulSoup(page,'html.parser').select_one('#etf_issuer > select')
         issuers ={page['value']:page.string for page in pages_etf.select('option')}
 
-        for issuer in tqdm(issuers.keys()):
+        for issuer in issuers.keys():
             req = Request(f'{url}?&issuer_filter={issuer}',headers=hdr) 
             page = urlopen(req)
             soup = BeautifulSoup(page,'html.parser')
@@ -100,7 +100,7 @@ class Profiles:
                                 name=page_ETF.find("span", {'class':'alertBellGrayPlus js-plus-icon genToolTip oneliner'})['data-name'],
                                 data_src = data_src,
                                 market_factors=market_factors,
-                                enable_profile_engineering =False) for page_ETF in pages_ETF]
+                                enable_profile_engineering =False) for page_ETF in tqdm(pages_ETF)]
             
                 
                 
@@ -115,7 +115,7 @@ class Profiles:
                             name=info['Name'],
                             data_src = data_src,
                             market_factors=market_factors,
-                            enable_profile_engineering =False) for _, info in info.iterrows()}
+                            enable_profile_engineering =False) for _, info in tqdm(info.iterrows())}
 
         # yield from [Info(ticker=info['Symbol'],
         #                     name=info['Security'],
