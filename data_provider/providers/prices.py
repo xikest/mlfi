@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 
 class Prices:
-    cnt = 0
+    # cnt = 0
     # @staticmethod
     # async   def load_from_web(symbols:List[str]=['AAPL'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
     #             for symbol in symbols: 
@@ -63,9 +63,9 @@ class Prices:
             except  Exception as e:
                 print(f' error_{ticker},prices: {e}')
                 
-            if Prices.cnt > 5 :
-                break
-            Prices.cnt += 1
+            # if Prices.cnt > 5 :
+                # break
+            # Prices.cnt += 1
 
         
         
