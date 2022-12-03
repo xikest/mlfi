@@ -86,7 +86,7 @@ class Data:
         context.profiles = pd.DataFrame([profile for profile in gen_profiles]).set_index('ticker')
         
         # 중간 데이터 저장 (프로파일)
-        self._save_data(context)
+        # self._save_data(context)
         # 가격 데이터 저장
         tickers = context.profiles.reset_index().loc[:,'ticker'] #정보 객체에서 ticket만 추출하여 반환
         data_src = context.profiles.reset_index().loc[:,'data_src'] 
@@ -101,7 +101,7 @@ class Data:
         # pd.concat([price for price in gen_prices]).loc[:,'Adj Close'].unstack('ticker')  #삭제
         
         # 중간 데이터 저장 (가격데이터)
-        self._save_data(context)
+        # self._save_data(context)
         
         #factor 데이터 저장
         print('start factors')
@@ -109,7 +109,7 @@ class Data:
         gen_ff_factors = FamaFrench.load_from_web([context.profiles.loc[:,'market_factors'][0]])
         context.factors = pd.concat([factor for factor in gen_ff_factors])
         # 중간 데이터 저장 (팩터 데이터)
-        self._save_data(context)
+        # self._save_data(context)
         # context.profiles = pd.DataFrame([profile for profile in gen_profiles]).set_index('ticker') #삭제
         
         # 데이터 엔지니어링 작업

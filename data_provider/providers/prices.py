@@ -22,7 +22,7 @@ class Prices:
     #                     print(f'{symbol},prices: {e}')
     #                     pass
     @staticmethod
-    def load_from_web(tickers:List[str]=['AAPL'], data_src='yahoo', start='2000-1-1', end='2022-12-31') -> pd.DataFrame:
+    def load_from_web(tickers:List[str]=['AAPL'], data_src='yahoo', start='2010-1-1', end='2022-12-31') -> pd.DataFrame:
         """
         pandaDatareader에서 데이터를 받아온다.
         
@@ -53,7 +53,7 @@ class Prices:
             try:
                 if data_src == 'fdr':
                     df = fdr.DataReader(ticker,  start=start, end=end)
-                    print(df.head(1))
+                    # print(df.head(1))
                     df.loc[:,'ticker']=ticker
                     yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
                 else:
