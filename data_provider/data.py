@@ -91,7 +91,7 @@ class Data:
         tickers = context.profiles.reset_index().loc[:,'ticker'] #정보 객체에서 ticket만 추출하여 반환
         data_src = context.profiles.reset_index().loc[:,'data_src'] 
         
-        gen_prices = Prices.load_from_web(tickers, data_src= data_src,  start='2000-1-1', end='2022-12-31')  #가격 반환을 위한 제너레이터
+        gen_prices = Prices.load_from_web(tickers, data_src= data_src,  start='2010-1-1', end='2022-12-31')  #가격 반환을 위한 제너레이터
         
         print('start prices')
        
