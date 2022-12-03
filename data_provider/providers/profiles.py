@@ -83,6 +83,8 @@ class Profiles:
 
 
     def _load_profile_ETF_from_investing(self, url:str, data_src:str, market_factors:Optional[str]=None)-> Iterator[Profile]:
+        profiles = set()
+        
         hdr ={'User-Agent': 'Mozilla/5.0'}
         req = Request(url,headers=hdr)
         page = urlopen(req)
@@ -94,15 +96,15 @@ class Profiles:
             page = urlopen(req)
             soup = BeautifulSoup(page,'html.parser')
             pages_ETF = soup.select_one('#etfs > tbody')
-            
-            
-            profiles = {Profile(ticker=page_ETF.find("td", {'class':'left symbol'})['title'],
-                                name=page_ETF.find("span", {'class':'alertBellGrayPlus js-plus-icon genToolTip oneliner'})['data-name'],
-                                data_src = data_src,
-                                market_factors=market_factors,
-                                enable_profile_engineering =False) for page_ETF in pages_ETF}
-            
-            yield from profiles
+                        
+            for page_ETF in pages_ETF:
+                profiles.add(Profile(ticker=page_ETF.find("td", {'class':'left symbol'})['title'],
+                                                            name=page_ETF.find("span", {'class':'alertBellGrayPlus js-plus-icon genToolTip oneliner'})['data-name'],
+                                                            data_src = data_src,
+                                                            market_factors=market_factors,
+                                                            enable_profile_engineering =False))
+                    
+        yield from profiles
             
                 
                 
