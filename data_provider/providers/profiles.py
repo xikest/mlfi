@@ -96,11 +96,13 @@ class Profiles:
             pages_ETF = soup.select_one('#etfs > tbody')
             
             
-            yield from {Profile(ticker=page_ETF.find("td", {'class':'left symbol'})['title'],
+            profiles = {Profile(ticker=page_ETF.find("td", {'class':'left symbol'})['title'],
                                 name=page_ETF.find("span", {'class':'alertBellGrayPlus js-plus-icon genToolTip oneliner'})['data-name'],
                                 data_src = data_src,
                                 market_factors=market_factors,
                                 enable_profile_engineering =False) for page_ETF in pages_ETF}
+            
+            yield from profiles
             
                 
                 
@@ -111,11 +113,14 @@ class Profiles:
         """
         info = fdr.StockListing(market).rename(columns={'Code':'Symbol'})
         
-        yield from {Profile(ticker=info['Symbol'],
+        profiles = {Profile(ticker=info['Symbol'],
                             name=info['Name'],
                             data_src = data_src,
                             market_factors=market_factors,
-                            enable_profile_engineering =False) for _, info in info.iterrows()}
+                            enable_profile_engineering =False) for _, info in info.iterrows()}  #중복 제거
+        
+        
+        yield from profiles
 
         # yield from [Info(ticker=info['Symbol'],
         #                     name=info['Security'],
