@@ -87,7 +87,7 @@ class Data:
         
         # 중간 데이터 저장 (프로파일)
         self._save_data(context)
-        
+        s
         # 가격 데이터 저장
         tickers = context.profiles.reset_index().loc[:,'ticker'] #정보 객체에서 ticket만 추출하여 반환
         data_src = context.profiles.reset_index().loc[:,'data_src'] 
