@@ -47,19 +47,19 @@ class Profiles:
             yield from Profiles()._load_profile_snp500(data_src = 'yahoo', market_factors = 'F-F_Research_Data_5_Factors_2x3')
             
         elif market == 'kospi':
-            yield from Profiles()._load_profile_stocks_from_fdr('KOSPI', data_src = 'fdr')
+            yield from Profiles()._load_profile_stocks_from_fdr('KOSPI', data_src = 'naver')
             
         elif market == 'nasdaq':
-            yield from Profiles()._load_profile_stocks_from_fdr('NASDAQ', data_src = 'fdr', market_factors = 'F-F_Research_Data_5_Factors_2x3')
+            yield from Profiles()._load_profile_stocks_from_fdr('NASDAQ', data_src = 'yahoo', market_factors = 'F-F_Research_Data_5_Factors_2x3')
 
         elif market == 'etf_us':
             url = 'https://kr.investing.com/etfs/usa-etfs' # 인베스팅 닷컴 ETF 미국 ETF 리스트
-            yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'fdr', market_factors = 'F-F_Research_Data_5_Factors_2x3')
+            yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'yahoo', market_factors = 'F-F_Research_Data_5_Factors_2x3')
             
         elif market == 'etf_kr':
             print('etf_kr')
             url = 'https://kr.investing.com/etfs/south-korea-etfs' # 인베스팅 닷컴 ETF 한국 ETF 리스트
-            yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'fdr')
+            yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'naver')
         
 
     def _load_profile_snp500(self, data_src:str, market_factors:str = 'F-F_Research_Data_5_Factors_2x3') -> Iterator[Profile]:
