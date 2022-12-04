@@ -51,32 +51,32 @@ class Prices:
             print(f'{ticker} downlaod from {data_src}, period: {start} to {end}')
             
             
-            try:
-                df = web.DataReader(ticker,data_src, start=start, end=end)
-                df.loc[:,'ticker']=ticker
-                yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+            # try:
+            #     df = web.DataReader(ticker,data_src, start=start, end=end)
+            #     df.loc[:,'ticker']=ticker
+            #     yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
                 
-            except  Exception as e:
-                print(f' error_web_{ticker},prices: {e}, try to fdr')
-                df = fdr.DataReader(ticker,  start=start, end=end)
-                df.loc[:,'ticker']=ticker
-                yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+            # except  Exception as e:
+            #     print(f' error_web_{ticker},prices: {e}, try to fdr')
+            #     df = fdr.DataReader(ticker,  start=start, end=end)
+            #     df.loc[:,'ticker']=ticker
+            #     yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
 
                 
             
             
-            # try:
-            #     if data_src == 'fdr':
-            #         df = fdr.DataReader(ticker,  start=start, end=end)
-            #         # print(df.head(1))
-            #         df.loc[:,'ticker']=ticker
-            #         yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
-            #     else:
-            #         df = web.DataReader(ticker,data_src, start=start, end=end)
-            #         df.loc[:,'ticker']=ticker
-            #         yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
-            # except  Exception as e:
-            #     print(f' error_{ticker},prices: {e}')
+            try:
+                if data_src == 'fdr':
+                    df = fdr.DataReader(ticker,  start=start, end=end)
+                    # print(df.head(1))
+                    df.loc[:,'ticker']=ticker
+                    yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+                else:
+                    df = web.DataReader(ticker,data_src, start=start, end=end)
+                    df.loc[:,'ticker']=ticker
+                    yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+            except  Exception as e:
+                print(f' error_{ticker},prices: {e}')
                 
 
 
