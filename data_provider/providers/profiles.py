@@ -66,7 +66,7 @@ class Profiles:
         url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
         df = pd.read_html(url, header=0)[0]
         df.loc[:,'Symbol'] = df.loc[:, 'Symbol'].map(lambda x:x.replace('.' , '-'))
-        # df = df.iloc[:3,:]
+        df = df.iloc[:3,:]
         
         yield from{Profile(ticker=info['Symbol'],
                             name=info['Security'],
