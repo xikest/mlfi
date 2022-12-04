@@ -64,7 +64,7 @@ class Prices:
                     yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
                 except Exception as e:
                     print(f' error_web_{ticker},prices: {e}, no data')
-                    pass
+                    continue
                 
             
             
