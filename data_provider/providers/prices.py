@@ -48,12 +48,13 @@ class Prices:
         
         
         for ticker, data_src in zip(tickers, data_src): 
-            print(f'{ticker} downlaod from {data_src}, period: {start} to {end}')
+           
             
             
             try:
                 df = web.DataReader(ticker,data_src, start=start, end=end)
                 df.loc[:,'ticker']=ticker
+                print(f'{ticker} downlaod from {data_src}, period: {start} to {end}')
                 yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
                 
             except  Exception as e:
@@ -61,6 +62,7 @@ class Prices:
                     print(f' error_web_{ticker},prices: {e}, try to fdr')
                     df = fdr.DataReader(ticker,  start=start, end=end)
                     df.loc[:,'ticker']=ticker
+                    print(f'{ticker} downlaod from fdr, period: {start} to {end}')
                     yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
                 except Exception as e:
                     print(f' error_web_{ticker},prices: {e}, no data')
