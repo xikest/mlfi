@@ -33,7 +33,7 @@ class Profiles:
         pass
 
     @staticmethod 
-    def load_profiles(market:str='snp500') -> Iterator[Profile]:
+    def load_profiles(label:str='snp500') -> Iterator[Profile]:
         """ 입력된 시장에 맞는 정보를 제공한다.
 
         Args:
@@ -43,24 +43,28 @@ class Profiles:
             Generator[Info]: ticker 별로 정보를 생성한다(generator)
         """
 
-        if market == 'snp500':
+        if label == 'snp500':
             yield from Profiles()._load_profile_snp500(data_src = 'yahoo', market_factors = 'F-F_Research_Data_5_Factors_2x3')
             
-        elif market == 'kospi':
+        elif label == 'kospi':
             yield from Profiles()._load_profile_stocks_from_fdr('KOSPI', data_src = 'naver')
             
-        elif market == 'nasdaq':
+        elif label == 'nasdaq':
             yield from Profiles()._load_profile_stocks_from_fdr('NASDAQ', data_src = 'yahoo', market_factors = 'F-F_Research_Data_5_Factors_2x3')
 
-        elif market == 'etf_us':
+        elif label == 'etf_us':
             url = 'https://kr.investing.com/etfs/usa-etfs' # 인베스팅 닷컴 ETF 미국 ETF 리스트
             yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'yahoo', market_factors = 'F-F_Research_Data_5_Factors_2x3')
             
-        elif market == 'etf_kr':
+        elif label == 'etf_kr':
             print('etf_kr')
             url = 'https://kr.investing.com/etfs/south-korea-etfs' # 인베스팅 닷컴 ETF 한국 ETF 리스트
             yield from Profiles()._load_profile_ETF_from_investing(url, data_src = 'naver')
-        
+            
+
+
+
+
 
     def _load_profile_snp500(self, data_src:str, market_factors:str = 'F-F_Research_Data_5_Factors_2x3') -> Iterator[Profile]:
         url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
@@ -80,7 +84,6 @@ class Profiles:
                             data_src = data_src,
                             market_factors = market_factors,
                             enable_profile_engineering = True) for _, info in df.iterrows()}
-
 
     def _load_profile_ETF_from_investing(self, url:str, data_src:str, market_factors:Optional[str]=None)-> Iterator[Profile]:
         profiles = set()
@@ -104,10 +107,7 @@ class Profiles:
                                                             market_factors=market_factors,
                                                             enable_profile_engineering =False))
         yield from profiles
-            
-                
-                
-                
+                            
     def _load_profile_stocks_from_fdr(self, market:str = 'S&P500', data_src:str='fdr', market_factors:Optional[str]=None) -> Iterator[Profile]:
         """
         market = S&P500 , NASDAQ, KOSPI, KOSDAQ
@@ -118,7 +118,7 @@ class Profiles:
                             name=info['Name'],
                             data_src = data_src,
                             market_factors=market_factors,
-                            enable_profile_engineering =False) for _, info in info.iterrows()}  #중복 제거
+                            enable_profile_engineering = False) for _, info in info.iterrows()}  #중복 제거
         
         
         yield from profiles

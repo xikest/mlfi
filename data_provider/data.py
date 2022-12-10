@@ -1,15 +1,15 @@
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 from dataclasses  import dataclass
 import pandas as pd
 import datetime as dt
 import tqdm
 from .providers import Profiles, Prices, FamaFrench, DataEngineer
 from .functions_for_data import FunctionPath
-
+import pandas as pd
  
 @dataclass
 class Context:
-        market:Optional[str]=None
+        label:Optional[str]=None
         prices:pd.DataFrame = None
         volumes: pd.DataFrame = None
         profiles:pd.DataFrame = None
@@ -18,16 +18,18 @@ class Context:
         updated_date:pd.Timestamp = None
         
 
-class Data:
-    def __init__(self, market:str='snp500'):
-        self._context = Context(market=market)
+
+
+class BasicData:
+    def __init__(self, label:str='snp500'):
+        self._context = Context(label=label)
         self._context = self._load_data(self._context)
         if self._context.updated_date is None: self._context = self._prepare_data(self._context)
         pass
     
     @property
-    def market(self):
-        return self._context.market
+    def label(self):
+        return self._context.label
     
     @property
     def prices(self):
@@ -65,24 +67,24 @@ class Data:
     def _load_data(self, context:Context): #불러오기
         try:
 
-            data = FunctionPath.Pickle.load_from_pickle(f'{context.market}')
-            print(f'{context.market} loaded')
+            data = FunctionPath.Pickle.load_from_pickle(f'{context.label}')
+            print(f'{context.label} loaded')
             return data
         except:
-            print(f'{context.market} load fail')
+            print(f'{context.label} load fail')
             return context
     
     def _save_data(self, context:Context): # 저장
         context.updated_date:pd.Timestamp = dt.datetime.today().strftime('%Y-%m-%d')
-        FunctionPath.Pickle.save_to_pickle(context, f'{context.market}')
-        print(f'{context.market} saved')
+        FunctionPath.Pickle.save_to_pickle(context, f'{context.label}')
+        print(f'{context.label} saved')
         return print("saved")
     
     def _prepare_data(self, context:Context):
-        # tickers = [profile.ticker for profile in Profiles.load_profiles(context.market)]  #삭제
+        # tickers = [profile.ticker for profile in Profiles.load_profiles(context.label)]  #삭제
         
         #프로파일 정보 저장
-        gen_profiles = Profiles.load_profiles(context.market)  # 프로파일을 위한 제너레이터
+        gen_profiles = Profiles.load_profiles(context.label)  # 프로파일을 위한 제너레이터
         context.profiles = pd.DataFrame([profile for profile in gen_profiles]).set_index('ticker')
         
         # 중간 데이터 저장 (프로파일)
@@ -121,3 +123,23 @@ class Data:
         print('fin')
         return context
     
+    
+class CustomizingData(BasicData):
+    def __init__(self, src_label:str ='etf_us'):
+        super().__init__(src_label)
+        pass
+        
+        
+    def make_dataset(self, cols:List[str]=['XOM', 'AAPL'], dataset_label = 'customDataset'):
+        idx = pd.IndexSlice
+        context = Context( label = dataset_label,
+                            profiles = self._context.profiles.loc[cols,:],
+                            prices = self._context.prices.loc[:, cols],
+                            volumes = self._context.volumes.loc[:,cols],
+                            factors= self._context.factors,
+                            data_engineered ={'w': self._context.data_engineered.get('w').loc[idx[cols,:],:],
+                                                            'm': self._context.data_engineered.get('w').loc[idx[cols,:],:]},
+                            updated_date = self._context.updated_date
+                            )
+        self._save_data(context)
+        return context
