@@ -118,9 +118,9 @@ class BasicData:
         # 데이터 엔지니어링 작업
         print('start engineering')
         
-        context.data_engineered ={period: DataEngineer.get_data_engineered(context.prices, context.factors, context.profiles, period=period) for period in ['w', 'm']}
+        context.data_engineered ={period: DataEngineer().get_data_engineered(context.prices, context.factors, context.profiles, period=period) for period in ['w', 'm']}
         
-        context.prices_engineered = DataEngineer.get_prices_engineered(context.prices, context.volumes)
+        context.prices_engineered = DataEngineer().get_prices_engineered(context.prices, context.volumes)
         # 업데이트 일자 기록     
         self._save_data(context)
         print('fin')

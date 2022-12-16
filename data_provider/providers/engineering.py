@@ -10,30 +10,31 @@ from .function_for_engineering.factors import MarketFactors, MomentumFactors, Da
 class DataEngineer:
     """ 데이터를 가공한다.
     """
-    def __init__(self):
+    def __init__(self, dfPrices:pd.DataFrame, dfVolumes:pd.DataFrame,  dfFactors:pd.DataFrame, dfprofiles:pd.DataFrame, period='m'):
         """_summary_
 
         Args:
             dfPrices (pd.DataFrame): 계산한 가격 데이터이다. 인덱스는 멀티 인덱스이고, index(Date, Symbol), columns[price]
             dfFactors (F): 파머 프렌치 팩터 데이터이다. F-F_Research_Data_5_Factors_2x3
         """
-        self._data_engineered = None
-        self._prices_engineered = None
+        # self._data_engineered = None
+        # self._prices_engineered = None
         
-        # self._dfPrices = dfPrices
-        # self._dfVolumes = dfVolumes
-        # self._dfFactors = dfFactors
-        # self._dfprofiles = dfprofiles
-        # self._period = period
+        self._dfPrices = dfPrices
+        self._dfVolumes = dfVolumes
+        self._dfFactors = dfFactors
+        self._dfprofiles = dfprofiles
+        self._period = period
         pass
     
-    def get_data_engineered(self, dfPrices:pd.DataFrame, dfFactors:pd.DataFrame, dfprofiles:pd.DataFrame, period='m'):
-        if self._data_engineered is None:  self._data_engineered = self._engineering_data(dfPrices, dfprofiles, dfFactors, period)
-        return self._data_engineered
+    def get_data_engineered(self):
+        # if self._data_engineered is None:  
+        return self._engineering_data(self._dfPrices, self._dfprofiles, self._dfFactors, self._period)
+        # return self._data_engineered
         
-    def get_prices_engineered(self, dfPrices:pd.DataFrame, dfVolumes:pd.DataFrame):
-        if self._prices_engineered is None:  self._prices_engineered = self._engineering_prices(dfPrices, dfVolumes)
-        return self._prices_engineered
+    def get_prices_engineered(self):
+        # if self._prices_engineered is None:  self._prices_engineered = 
+        return self._engineering_prices(self._dfPrices, self._dfVolumes)
         
         
     def _engineering_data(self, dfPrices:pd.DataFrame, dfprofiles:pd.DataFrame=None, dfFactors:pd.DataFrame=None, period:str='m'):
