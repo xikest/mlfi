@@ -15,6 +15,7 @@ class Context:
         profiles:pd.DataFrame = None
         factors:pd.DataFrame = None
         data_engineered :Dict[str,pd.DataFrame] = None
+        prices_engineered:pd.DataFrame = None
         updated_date:pd.Timestamp = None
         
 
@@ -116,8 +117,10 @@ class BasicData:
         
         # 데이터 엔지니어링 작업
         print('start engineering')
-        context.data_engineered ={period: DataEngineer(context.prices, context.factors, context.profiles, period=period).get_data() for period in ['w', 'm']}
         
+        context.data_engineered ={period: DataEngineer.get_data_engineered(context.prices, context.factors, context.profiles, period=period) for period in ['w', 'm']}
+        
+        context.prices_engineered = DataEngineer.get_prices_engineered(context.prices, context.volumes)
         # 업데이트 일자 기록     
         self._save_data(context)
         print('fin')
