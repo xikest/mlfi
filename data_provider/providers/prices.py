@@ -1,6 +1,6 @@
 from typing import Generator, List, Union
 import pandas as pd
-import pandas_datareader.data as web 
+import pandas_datareader.data as web
 # from pandas_datareader import wb
 import tqdm
 import FinanceDataReader as fdr  # pip install -U finance-datareader
@@ -48,7 +48,7 @@ class Prices:
         
         
         for ticker, data_src in zip(tickers, data_src): 
-           
+            print(f'{ticker}, {data_src}, {start}, {end}')
             
             
             try:
@@ -65,7 +65,7 @@ class Prices:
                     print(f'{ticker} downlaod from fdr, period: {start} to {end}')
                     yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
                 except Exception as e:
-                    print(f' error_web_{ticker},prices: {e}, no data')
+                    print(f' error_fdr_{ticker},prices: {e}, no data')
                     continue
                 
             
