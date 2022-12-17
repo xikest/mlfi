@@ -10,7 +10,7 @@ from .function_for_engineering.factors import MarketFactors, MomentumFactors, Da
 class DataEngineer:
     """ 데이터를 가공한다.
     """
-    def __init__(self, dfPrices:pd.DataFrame, dfVolumes:pd.DataFrame,  dfFactors:pd.DataFrame, dfprofiles:pd.DataFrame, period='m'):
+    def __init__(self, dfPrices:pd.DataFrame, dfVolumes:pd.DataFrame,  dfFactors:pd.DataFrame, dfprofiles:pd.DataFrame):
         """_summary_
 
         Args:
@@ -24,12 +24,11 @@ class DataEngineer:
         self._dfVolumes = dfVolumes
         self._dfFactors = dfFactors
         self._dfprofiles = dfprofiles
-        self._period = period
         pass
     
-    def get_data_engineered(self):
+    def get_data_engineered(self, period='m'):
         # if self._data_engineered is None:  
-        return self._engineering_data(self._dfPrices, self._dfprofiles, self._dfFactors, self._period)
+        return self._engineering_data(self._dfPrices, self._dfprofiles, self._dfFactors, period)
         # return self._data_engineered
         
     def get_prices_engineered(self):

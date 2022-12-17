@@ -113,14 +113,13 @@ class BasicData:
         context.factors = pd.concat([factor for factor in gen_ff_factors])
         # 중간 데이터 저장 (팩터 데이터)
         # self._save_data(context)
-        # context.profiles = pd.DataFrame([profile for profile in gen_profiles]).set_index('ticker') #삭제
         
         # 데이터 엔지니어링 작업
         print('start engineering')
+        de = DataEngineer(context.prices, context.volumes, context.factors, context.profiles)
+        context.data_engineered ={period: de.get_data_engineered(period=period) for period in ['w', 'm']}
+        context.prices_engineered = de.get_prices_engineered()
         
-        context.data_engineered ={period: DataEngineer().get_data_engineered(context.prices, context.factors, context.profiles, period=period) for period in ['w', 'm']}
-        
-        context.prices_engineered = DataEngineer().get_prices_engineered(context.prices, context.volumes)
         # 업데이트 일자 기록     
         self._save_data(context)
         print('fin')
