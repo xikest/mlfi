@@ -22,7 +22,7 @@ class Prices:
     #                     print(f'{symbol},prices: {e}')
     #                     pass
     @staticmethod
-    def load_from_web(tickers:List[str]=['AAPL'], data_src='yahoo', start='2010-1-1', end='2022-12-31') -> pd.DataFrame:
+    def load_from_web(tickers:List[str]=['AAPL'], data_src=['yahoo'], start='2010-1-1', end='2022-12-31') -> pd.DataFrame:
         """
         pandaDatareader에서 데이터를 받아온다.
         
@@ -55,7 +55,8 @@ class Prices:
                 df = web.DataReader(ticker,data_src, start=start, end=end)
                 df.loc[:,'ticker']=ticker
                 print(f'{ticker} downlaod from {data_src}, period: {start} to {end}')
-                yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+                df = df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+                yield  df
                 
             except  Exception as e:
                 try:
@@ -63,7 +64,8 @@ class Prices:
                     df = fdr.DataReader(ticker,  start=start, end=end)
                     df.loc[:,'ticker']=ticker
                     print(f'{ticker} downlaod from fdr, period: {start} to {end}')
-                    yield  df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+                    df = df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
+                    yield df
                 except Exception as e:
                     print(f' error_fdr_{ticker},prices: {e}, no data')
                     continue
