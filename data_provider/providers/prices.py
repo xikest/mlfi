@@ -1,6 +1,6 @@
 from typing import Generator, List, Union
 import pandas as pd
-import pandas_datareader.data as web
+from pandas_datareader import data as pdr
 # from pandas_datareader import wb
 import tqdm
 import FinanceDataReader as fdr  # pip install -U finance-datareader
@@ -44,15 +44,14 @@ class Prices:
         2020-01-07	AAPL	74.959999	75.224998	74.370003	74.597504	108872000.0	73.202744
         """
 
-
-        
+  
         
         for ticker, data_src in zip(tickers, data_src): 
             print(f'{ticker}, {data_src}, {start}, {end}')
             
             
             try:
-                df = web.DataReader(ticker,data_src, start=start, end=end)
+                df = pdr.get_data_yahoo(ticker,data_src, start=start, end=end)
                 df.loc[:,'ticker']=ticker
                 print(f'{ticker} downlaod from {data_src}, period: {start} to {end}')
                 df = df.reset_index().set_index(['Date','ticker']).loc[:,['Open', 'High', 'Low', 'Close', 'Volume', 'Adj Close']] #yahoo: 'Adj Close'
@@ -60,7 +59,7 @@ class Prices:
                 
             except  Exception as e:
                 try:
-                    print(f' error_web_{ticker},prices: {e}, try to fdr')
+                    print(f' error_{data_src}_{ticker},prices: {e}, try to fdr')
                     df = fdr.DataReader(ticker,  start=start, end=end)
                     df.loc[:,'ticker']=ticker
                     print(f'{ticker} downlaod from fdr, period: {start} to {end}')
@@ -163,7 +162,7 @@ class FamaFrench:
         def load_from_web(tickers:List[str]=['F-F_Research_Data_5_Factors_2x3'], start_date='2020-1-1', end_date='2022-12-31') -> pd.DataFrame:
             for ticker in tqdm(tickers): 
                     try:
-                        df = web.DataReader(ticker, 'famafrench', start=start_date, end=end_date)
+                        df = fdr.DataReader(ticker, 'famafrench', start=start_date, end=end_date)
                         yield df[0]
                     except Exception as e:
                         print(f'F-F_Research_Data: {e}')
